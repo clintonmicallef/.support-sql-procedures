@@ -33,15 +33,16 @@ VALUES
  ('{deposit}', 'check_credit', 'Cheks whether credit was pushed by merchant or ourselves')
 ;
 
-\prompt 'Please enter a keyword', keyword
+\prompt 'Please enter a keyword or press enter to see full list', keyword
 
-SELECT *
+
+SELECT aliasname, comment
   FROM supportsqlaliases
  WHERE TRUE
    -- AND :'keyword' ILIKE '%' || REPLACE(REPLACE((supportsqlaliases.category)::text, '{','')::text,'}','') || '%'
    -- Below my suggestions. First one which is commented look for exact word, therefore using ILIKE is probably better : )
    -- AND ARRAY[:'keyword']::text[] && category
-   AND array_to_string(category, ',') ILIKE '%' || :'keyword' || '%'
+   AND (CASE WHEN NULLIF(:'keyword','') IS NOT NULL THEN (array_to_string(category, ',') ILIKE '%' || :'keyword' || '%') ELSE TRUE END)
    ;
 
 
