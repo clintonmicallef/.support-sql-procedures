@@ -1,3 +1,6 @@
+-- TODO
+-- Change the name so it doesn't get mixed up with psqlrc file
+
 \set SupportSQL '~/Google\'' ''Drive/Team/2nd\'' ''Line\'' ''team\'' ''\(internal\)/Repositories/SupportSQL/'
 
 \set sqlhelp '\\i ':SupportSQL'sql_aliases.sql'
