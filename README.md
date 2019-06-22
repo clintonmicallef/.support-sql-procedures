@@ -14,13 +14,13 @@ git --version
 
 ## Set up your Git configuration
 
-1. Set your Git with Trustly's credentials in the **Terminal**
+1. Configure your Git credentials in the **Terminal**
 
 ```
-git config --global user.email "email@trustly.com"
+git config --global user.email "YOUR_TRUSTLY_EMAIL@trustly.com"
 ```
 ```
-git config --global user.name "Firstname Lastname"
+git config --global user.name "YOUR_FIRSTNAME_LASTNAME"
 ```
 
 ## Install repository
