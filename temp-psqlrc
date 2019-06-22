@@ -3,7 +3,7 @@
 \set support 'pg_temp'
 
 -- Import procedure and create temporary function
-\i ':local_path'temp-bank_account_balance.sql
+\i :local_path''temp-bank_account_balance.sql
 
 /*
 \set sqlhelp '\\i ':local_path'sql_aliases.sql'
