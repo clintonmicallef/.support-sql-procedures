@@ -18,9 +18,10 @@ git --version
 
 ```
 git --version
+>> git version 2.20.1 (Apple Git-117)
 ```
 
-Alternatively, you can install xCode CLI by running the command below in the **Terminal**:
+If the software update was not initiated automatically after running `git --version`, you can install **Xcode Command Line Tools** by running the command below in the **Terminal**:
 
 ```
 xcode-select --install
@@ -29,9 +30,9 @@ xcode-select --install
 
 ## Configure your Git credentials
 
-Once the Git client is installed, configure your Git profile with your real credentials. This allows to access the team resources and track changes.
+After the Git has been successfully installed, configure your Git profile credentials. This allows to access the team resources and track changes.
 
-1. Replace `YOUR_TRUSTLY_EMAIL` and `YOUR_FIRSTNAME_LASTNAME` in the commands below and run them in the **Terminal**:
+1. Replace `YOUR_TRUSTLY_EMAIL` and `YOUR_FIRSTNAME_LASTNAME` in the commands below with your corporate e-mail and full name, and run them in the **Terminal**:
 
 ```
 git config --global user.email "YOUR_TRUSTLY_EMAIL@trustly.com"
@@ -43,7 +44,7 @@ git config --global user.name "YOUR_FIRSTNAME_LASTNAME"
 
 ## Sync repository
 
-1. Initiate Git repository by running following commands in the **Terminal**:
+1. Initiate new Git repository by running following commands in the **Terminal**:
 
 ```
 mkdir ~/.trustly-support-sql
