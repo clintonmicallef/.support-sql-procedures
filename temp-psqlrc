@@ -1,0 +1,31 @@
+-- Set local path to the repository
+\set local_path '~/Google Drive/Resources/Database/Repositories/support-sql-procedures/'
+\set support 'pg_temp'
+
+-- Import procedure and create temporary function
+\i ':local_path'temp-bank_account_balance.sql
+
+/*
+\set sqlhelp '\\i ':local_path'sql_aliases.sql'
+\set monitor_all_withdrawals  '\\i ':local_path'monitor_all_withdrawals.sql'
+\set monitor_all_deposits  '\\i ':local_path'monitor_all_deposits.sql'
+\set get_withdrawal_routes  '\\i ':local_path'get_withdrawal_routes.sql'
+\set queue_per_bank  '\\i ':local_path'queue_per_bank.sql'
+\set queue_routing_candidates  '\\i ':local_path'queue_routing_candidates.sql'
+\set set_withdrawal_priority  '\\i ':local_path'set_withdrawal_priority.sql'
+\set check_safe_to_retry  '\\i ':local_path'check_safe_to_retry.sql'
+\set plausible_balance  '\\i ':local_path'plausible_balance.sql'
+\set merchant_exposure_limits  '\\i ':local_path'merchant_exposure_limits.sql'
+\set order_stages  '\\i ':local_path'order_stages.sql'
+\set order_iframe_steps  '\\i ':local_path'order_iframe_steps.sql'
+\set pa_connections  '\\i ':local_path'pa_connections.sql'
+\set entrystep_incident_overview  '\\i ':local_path'entrystep_incident_overview.sql'
+\set merchant_entrysteps  '\\i ':local_path'merchant_entrysteps.sql'
+\set entrystep_issues  '\\i ':local_path'entrystep_issues.sql'
+\set enduser_device_info  '\\i ':local_path'enduser_device_info.sql'
+\set graylisted_enduser  '\\i ':local_path'graylisted_enduser.sql'
+\set bank_account_balance  '\\i ':local_path'bank_account_balance.sql'
+\set entrystep_deposit_settlement_stats  '\\i ':local_path'entrystep_deposit_settlement_stats.sql'
+\set gdpr_request  '\\i ':local_path'gdpr_request.sql'
+\set check_credit  '\\i ':local_path'check_credit.sql'
+*/
