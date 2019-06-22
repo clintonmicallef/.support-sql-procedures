@@ -1,4 +1,4 @@
-# SupportSQL
+# Support SQL Stored Procedures
 
 ## Install Git
 
@@ -39,3 +39,7 @@ git init
 ```
 git pull https://0518c76da1808fe52255329f0d020aa39346b5d5@github.com/lukaszhanusik/SupportSQL.git
 ```
+
+## Set up your LiveDB client
+
+1. Configure LiveDB client and link with the repository
