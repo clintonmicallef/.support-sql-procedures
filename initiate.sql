@@ -31,22 +31,3 @@ VALUES
  ('{enduser}', 'gdpr_request', 'Provides All information needed for GDPR requirements'),
  ('{deposit}', 'check_credit', 'Cheks whether credit was pushed by merchant or ourselves')
 ;
-
---
-CREATE TEMP FUNCTION create_alias(_category text[3], _aliasname character varying, _comment text)
-  RETURNS boolean
-  LANGUAGE plpgsql
-  DECLARE
-  _OK boolean;
-  BEGIN
-  INSERT INTO supportsqlaliases
-    (category, aliasname, comment)
-  VALUES
-    (_category, _aliasname, _comment)
-  RETURNING TRUE INTO STRICT _OK;
-
-  RAISE NOTICE 'NOTICE_ALIAS_CREATED Category %, AliasName %, Comment %',_Category, _aliasname,comment;
-  RETURN TRUE;
-  END;
-
-  --- Also, the function to create aliases (\set) should also be generated based on this table in my opinion to avoid unnecessairy code...
