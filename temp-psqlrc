@@ -11,6 +11,7 @@
 
 -- Import and create stored procedures
 
+\i :local_path''temp-monitor_all_withdrawals.sql
 \i :local_path''temp-bank_account_balance.sql
 
 -- TOGGLE ON NOTICES
@@ -47,6 +48,9 @@
 \echo 'Support functions:\n'
 \echo '\t\t\t:support.Get_Bank_Account_Balance(_BankAccountID)\t\t-- Get balance of a specified bank account'
 
+\echo 'Support views:\n'
+\echo '\t\t\tSELECT * FROM View_Monitor_All_Withdrawals;\t\t-- Get balance of a specified bank account'
+
 -- Administration queries
 
 \set settings 'SELECT name, setting, unit, context FROM pg_settings;'
@@ -58,7 +62,3 @@
 \set sp 'SHOW search_path;'
 \set clear '\\! clear;'
 \set ll '\\! ls -lrt;'
-
--- SQL queries
-
-\set monitor_all_withdrawals '\\i ':'local_path''monitor_all_withdrawals.sql'
