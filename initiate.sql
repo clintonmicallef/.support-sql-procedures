@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION pg_temp.add_alias(_category text[3], _aliasname chara
   RETURNING TRUE INTO STRICT _OK;
   --Once the tuple is added, the new data in SupportSQLAliases is saved to CSV file.
   COPY supportsqlaliases(category, aliasname, comment) TO '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/supportsqlaliases.csv' DELIMITER ',' CSV HEADER; --!! THE PATH NEEDS TO CHANGE TO GIT REPOSITORY OR GOOGLE DRIVE
+  COPY (SELECT ('\set ' || supportsqlaliases.aliasname || ' \\i '':SQLQueriesDir''' || supportsqlaliases.aliasname || '.sql')::text FROM supportsqlaliases) TO '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/psqlrcscript.txt' --!! THE PATH NEEDS TO CHANGE TO A SPECIFIC FILE INSIDE GIT REPOSITORY OR GOOGLE DRIVE FROM WHERE PSQLRC ACTUAL FILE IS COPIES DATA
   RAISE NOTICE 'NOTICE_ALIAS_CREATED Category %, AliasName %, Comment %',_Category, _aliasname,_comment;
   RETURN TRUE;
   END;
@@ -48,6 +49,7 @@ CREATE OR REPLACE FUNCTION pg_temp.remove_alias(_aliasname character varying)
   RETURNING TRUE INTO STRICT _OK;
   --Once the tuple is removed, the new data in SupportSQLAliases is saved to CSV file.
   COPY supportsqlaliases(category, aliasname, comment) TO '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/supportsqlaliases.csv' DELIMITER ',' CSV HEADER; --!! THE PATH NEEDS TO CHANGE TO GIT REPOSITORY OR GOOGLE DRIVE
+  COPY (SELECT ('\set ' || supportsqlaliases.aliasname || ' \\i '':SQLQueriesDir''' || supportsqlaliases.aliasname || '.sql')::text FROM supportsqlaliases) TO '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/psqlrcscript.txt' --!! THE PATH NEEDS TO CHANGE TO A SPECIFIC FILE INSIDE GIT REPOSITORY OR GOOGLE DRIVE FROM WHERE PSQLRC ACTUAL FILE IS COPIES DATA
   RAISE NOTICE 'NOTICE_ALIAS_REMOVED AliasName %', _aliasname;
   RETURN TRUE;
   END;
