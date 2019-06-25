@@ -1,14 +1,18 @@
 /*Creates TEMP Table supportsqlaliases and inserts Valies
   This file must be added in psqlrc file*/
 
+--Table Storing SQL Aliases
 DROP TABLE supportsqlaliases;
 CREATE TEMP TABLE supportsqlaliases(
   category text[3] NOT NULL,
   aliasname character varying NOT NULL,
   comment text
 );
+--INSERTS INTO supportsqlaliases FROM CSV File
 \COPY supportsqlaliases(category, aliasname, comment) FROM '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/supportsqlaliases.csv' DELIMITER ',' CSV HEADER --!! THE PATH NEEDS TO CHANGE TO GIT REPOSITORY OR GOOGLE DRIVE
 
+--COPIES ALIAS NAME AND TRANSFORMS STRING FOR PSQLRC FILE
+\COPY (SELECT ('\set ' || supportsqlaliases.aliasname || ' \\i '':SQLQueriesDir''' || supportsqlaliases.aliasname || '.sql')::text FROM supportsqlaliases) TO '/Users/benjaminschembri/Trustly/Atom/SupportSQLRepository/psqlrcscript.txt' --!! THE PATH NEEDS TO CHANGE TO A SPECIFIC FILE INSIDE GIT REPOSITORY OR GOOGLE DRIVE FROM WHERE PSQLRC ACTUAL FILE IS COPIES DATA
 
 --Function Populating SupportSQLAliases Table
 CREATE OR REPLACE FUNCTION pg_temp.add_alias(_category text[3], _aliasname character varying, _comment text)
