@@ -1,7 +1,7 @@
 -- Set aliases in PSQL session
 -- This is called from init.psql file
 
--- :local_path_supportsqlprocedures is set in the install script and added to .psqlrc
+-- :local_path_supportsqlprocedures is set in .psqlrc
 
 \set help '\\i ':local_path_supportsqlprocedures'/procedures/help.sql'
 \set monitor_all_withdrawals  '\\i ':local_path_supportsqlprocedures'/procedures/monitor_all_withdrawals.sql'
