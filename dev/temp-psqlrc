@@ -1,7 +1,7 @@
 -- Set basic psql preferences
 -- Set local path to the repository
 
-\set local_path '~/Google Drive/Resources/Database/Repositories/support-sql-procedures/'
+\set local_path '':local_path_supportsqlprocedures'/'
 \set support 'pg_temp'
 
 -- TOGGLE OFF NOTICES
