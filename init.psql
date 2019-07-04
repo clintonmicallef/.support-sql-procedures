@@ -8,4 +8,6 @@
 
 -- Create temporary tables
 \ir 'tables/procedures.sql'
+
+-- Set aliases
 \ir set_aliases.psql

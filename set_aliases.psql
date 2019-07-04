@@ -3,7 +3,9 @@
 
 -- :local_path_supportsqlprocedures is set in .psqlrc
 
-\set help '\\i ':local_path_supportsqlprocedures'/procedures/help.sql'
+\set help '\\i ':local_path_supportsqlprocedures'/help.sql'
+
+/*
 \set monitor_all_withdrawals  '\\i ':local_path_supportsqlprocedures'/procedures/monitor_all_withdrawals.sql'
 \set monitor_all_deposits  '\\i ':local_path_supportsqlprocedures'/procedures/monitor_all_deposits.sql'
 \set get_withdrawal_routes  '\\i ':local_path_supportsqlprocedures'/procedures/get_withdrawal_routes.sql'
@@ -25,3 +27,18 @@
 \set entrystep_deposit_settlement_stats  '\\i ':local_path_supportsqlprocedures'/procedures/entrystep_deposit_settlement_stats.sql'
 \set gdpr_request  '\\i ':local_path_supportsqlprocedures'/procedures/gdpr_request.sql'
 \set check_credit  '\\i ':local_path_supportsqlprocedures'/procedures/check_credit.sql'
+*/
+
+--- Set SupportSQL_Procedures
+\cd :local_path_supportsqlprocedures
+\a
+\t
+\o .temp_file
+
+SELECT format('\set %s ''\\i %s''', substring(FileName, '(.*)\.sql$'), format('%s/%s/%s', :'local_path_supportsqlprocedures', 'procedures', FileName))
+  FROM SupportSQL_Procedures
+
+
+\o
+\i .temp_file
+\! ls
