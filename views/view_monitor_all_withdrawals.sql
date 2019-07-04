@@ -75,4 +75,4 @@ CREATE TEMPORARY VIEW View_Monitor_All_Withdrawals AS (
 );
 
 -- Prompt variable and execute view
-\set monitor_all_withdrawals 'SELECT * FROM ':support'.View_Monitor_All_Withdrawals;'
+-- \set monitor_all_withdrawals 'SELECT * FROM ':support'.View_Monitor_All_Withdrawals;'

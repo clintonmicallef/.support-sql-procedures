@@ -1,7 +1,6 @@
 CREATE OR REPLACE FUNCTION pg_temp.Get_Bank_Account_Balance(_BankAccountID integer)
   RETURNS TABLE(BankAccountID integer, EcoSysAccount character varying, BookKeepingBalance numeric, Datestamp timestamp with time zone, BankBalance numeric, Available numeric, BalanceDatestamp timestamp with time zone)
   LANGUAGE sql IMMUTABLE
-  SET search_path TO "$user", 'pg_temp', 'public'
 AS $function$
 SELECT BankAccounts.BankAccountID,
        Accounts.Name AS EcoSysAccount,
@@ -22,4 +21,4 @@ SELECT BankAccounts.BankAccountID,
 $function$;
 
 -- Prompt variable and execute function
-\set get_bank_account_balance '\\prompt ''Please enter BankAccountID'', bank_account_id \\\\ SELECT ':support'.Get_Bank_Account_Balance(':bank_account_id');'
+-- \set get_bank_account_balance '\\prompt ''Please enter BankAccountID'', bank_account_id \\\\ SELECT ':support'.Get_Bank_Account_Balance(':bank_account_id');'
