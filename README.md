@@ -78,3 +78,14 @@ In the **Terminal**, run the command below to check if the repository has been c
 ```
 ls -lrt ~/support-sql-procedures
 ```
+
+## Configure database client and set aliases
+
+In the **Terminal**, run the commands below to configure database client and alias
+
+```
+cd ~/.support-sql-procedures
+```
+```
+./install.sh
+```
