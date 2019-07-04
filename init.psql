@@ -1,0 +1,4 @@
+-- PSQL init file
+
+\echo :local_path_supportsqlprocedures
+\ir set_aliases.psql

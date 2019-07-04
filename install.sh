@@ -4,9 +4,12 @@ scriptDir=$(cd $(dirname "$0"); pwd)
 psqlrcFile="${HOME}/.psqlrc"
 psqlrcLine="\i '${scriptDir}/init.psql'"
 psqlrcLineEscaped="\\${psqlrcLine}"
+psqlSetLocalPath="\set local_path_supportsqlprocedures '${scriptDir}"
+psqlSetLocalPathEscaped="\\${psqlLocalPath}"
 
 touch ${psqlrcFile}
 grep -qxF "${psqlrcLine}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlrcLineEscaped}" ${psqlrcFile}
+grep -qxF "${psqlrcLine}" ${psqlSetLocalPath} || sed -i "" -e $'$ a\\\n'"${psqlSetLocalPathEscaped}" ${psqlrcFile}
 echo $'Your psqlrc configuration:\n'"$(cat ${psqlrcFile})"
 
 aliasFile="${HOME}/.bash_profile"
