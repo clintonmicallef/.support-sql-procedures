@@ -8,8 +8,8 @@ psqlSetLocalPath="\set local_path_supportsqlprocedures '${scriptDir}'"
 psqlSetLocalPathEscaped="\\${psqlSetLocalPath}"
 
 touch ${psqlrcFile}
-grep -qxF "${psqlrcLine}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlrcLineEscaped}" ${psqlrcFile}
 grep -qxF "${psqlSetLocalPath}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlSetLocalPathEscaped}" ${psqlrcFile}
+grep -qxF "${psqlrcLine}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlrcLineEscaped}" ${psqlrcFile}
 echo $'Your psqlrc configuration:\n'"$(cat ${psqlrcFile})"
 
 aliasFile="${HOME}/.bash_profile"
