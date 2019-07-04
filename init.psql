@@ -1,4 +1,8 @@
 -- PSQL init file
 
-\echo :local_path_supportsqlprocedures
+\set version_supportsqlprocedures '1.0'
+\echo 'Current Host Server Date Time: `date`\n'
+\echo 'Support-SQL-Procedures Version: ':version_supportsqlprocedures'\n'
+\echo 'Support-SQL-Procedures Repository: ':local_path_supportsqlprocedures'\n'
+
 \ir set_aliases.psql
