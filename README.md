@@ -58,6 +58,7 @@ user.email=alfa.omega@trustly.com
 ## Sync repository
 
 Initiate new Git repository by running following commands in the **Terminal**:
+> **WARNING**: To continue, you first need the `PERSONAL_TOKEN`. Ask Lukasz on Slack
 
 ```
 mkdir ~/.support-sql-procedures
