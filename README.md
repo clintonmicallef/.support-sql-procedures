@@ -1,5 +1,7 @@
 # Support SQL Stored Procedures
 
+Version available externally from [GitHub Gist](https://gist.github.com/lukaszhanusik/934accefc993d7d3d2bf04190ccf5087)
+
 ## Install Git
 
 The easiest way to install **Git** is to install the **Xcode Command Line Tools** which comes with Git among other things.  You can do this simply by trying to run the git command from the Terminal.
