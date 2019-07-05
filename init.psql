@@ -9,6 +9,7 @@
 -- Initialise and update environement
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
 \set git_update '\\i ':local_path_supportsqlprocedures'/update.psql'
+\set help '\\i ':local_path_supportsqlprocedures'/help.sql'
 
 -- Prevent disaply of loading notices
 -- \set QUIET yes
