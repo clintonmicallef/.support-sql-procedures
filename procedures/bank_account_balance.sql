@@ -18,4 +18,4 @@ SELECT Bankaccounts.BankAccountID, Accounts.name, Accountbalancesdaily.balance A
 
 /* Make use of temporary functions
 SELECT :support.Get_Bank_Account_Balance(:bankaccountID);
-*
+*/
