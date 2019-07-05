@@ -32,13 +32,13 @@ xcode-select --install
 
 The first thing you should do when you install Git is to set your user name and email address.
 
-Replace `YOUR_TRUSTLY_EMAIL` and `YOUR_FIRSTNAME_LASTNAME` in the commands below with your corporate e-mail and full name, and run them in the **Terminal**:
+Replace `YOUR_TRUSTLY_EMAIL` and `YOUR_FIRSTNAME YOUR_LASTNAME` in the commands below with your corporate e-mail and full name, and run them in the **Terminal**:
 
 ```
 git config --global user.email "YOUR_TRUSTLY_EMAIL@trustly.com"
 ```
 ```
-git config --global user.name "YOUR_FIRSTNAME_LASTNAME"
+git config --global user.name "YOUR_FIRSTNAME YOUR_LASTNAME"
 ```
 
 
@@ -48,8 +48,8 @@ If you want to check your configuration settings, you can use the `git config --
 
 ```
 $ git config --list
-user.name=YOUR_FIRSTNAME_LASTNAME
-user.email=YOUR_TRUSTLY_EMAIL@trustly.com
+user.name=Alfa Omega
+user.email=alfa.omega@trustly.com
 ...
 ```
 
