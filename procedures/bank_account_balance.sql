@@ -15,3 +15,7 @@ SELECT Bankaccounts.BankAccountID, Accounts.name, Accountbalancesdaily.balance A
    AND accountbalancesdaily.datestamp > current_date - 5 -- change interval
  ORDER BY datestamp DESC
  LIMIT 1;
+
+/* Make use of temporary functions
+SELECT :support.Get_Bank_Account_Balance(:bankaccountID);
+*
