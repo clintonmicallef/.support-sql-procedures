@@ -1,3 +1,4 @@
+# Ignore OS generated files
 .DS_Store
 .tags
 Icon\r
