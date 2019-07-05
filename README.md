@@ -76,16 +76,24 @@ git pull https://0518c76da1808fe52255329f0d020aa39346b5d5@github.com/lukaszhanus
 In the **Terminal**, run the command below to check if the repository has been created locally:
 
 ```
-ls -lrt ~/support-sql-procedures
+ls -lrt ~/.support-sql-procedures
 ```
 
 ## Configure database client and set aliases
 
-In the **Terminal**, run the commands below to configure database client and alias
+In the **Terminal**, run the commands below to configure database client and alias:
 
 ```
 cd ~/.support-sql-procedures
 ```
 ```
 ./install.sh
+```
+
+## Update repository
+
+In the **Terminal**, run the command below to update the repository to the newest available version:
+
+```
+updatesql
 ```
