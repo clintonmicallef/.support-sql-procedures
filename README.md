@@ -93,10 +93,27 @@ cd ~/.support-sql-procedures
 ./install.sh
 ```
 
-## Update repository
+## Restart terminal
 
-In the **Terminal**, run the command below to update the repository to the newest available version:
+Quit the **Terminal** windows to reset the settings. Start new window and login to the database as per usual:
+
+```
+livedb
+```
+
+# Update the repository
+
+Whenever the library has been updated, new procedures have been added, or existing functions adjusted, we need to update the repository manually.
+In order to do so,  please follow the command below:
+
+Quit the database and the **Terminal** windows. Start new **Terminal**, run the command below to update the repository to the newest available version:
 
 ```
 updatesql
+```
+
+You can login to the database as per usual:
+
+```
+livedb
 ```
