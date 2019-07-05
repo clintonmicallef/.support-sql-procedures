@@ -1,0 +1,64 @@
+-- Set basic psql preferences
+-- Set local path to the repository
+
+\set local_path '':local_path_supportsqlprocedures'/'
+\set support 'pg_temp'
+
+-- TOGGLE OFF NOTICES
+-- Generate all temporary tables and functions without notices
+
+\set QUIET ON
+
+-- Import and create stored procedures
+
+\i :local_path''temp-monitor_all_withdrawals.sql
+\i :local_path''temp-bank_account_balance.sql
+
+-- TOGGLE ON NOTICES
+-- Don't commit any more changes after this point
+
+\set QUIET OFF
+
+-- Print client interface
+-- TODO: Generate menu based on temporary table and calculate number of tabs for each line
+-- TODO: Clone help-manual guidelines from terminal applications like Homebrew or Google Cloud
+
+\echo '\nCurrent Host Server Date Time : '`date` '\n'
+\echo '\nSupport-SQL-Procedures [ver 1.0]\n'
+
+\echo 'Administrative queries:\n'
+\echo '\t\t\t:settings\t-- Server Settings'
+\echo '\t\t\t:activity\t-- Server Activity'
+\echo '\t\t\t:menu\t\t-- Help Menu'
+\echo '\t\t\t\\h\t\t-- Help with SQL commands'
+\echo '\t\t\t\\?\t\t-- Help with psql commands\n'
+
+\echo 'Development queries:\n'
+\echo '\t\t\t:sp\t\t-- Current Search Path'
+\echo '\t\t\t:clear\t\t-- Clear Screen'
+\echo '\t\t\t:ll\t\t-- List\n'
+
+-- TODO: Merge all functions together or group them in a smart way
+
+\echo 'Support procedures:\n'
+\echo '\t\t\t:monitor_all_withdrawals\t\t\t\t\t-- Display payouts queue'
+\echo '\t\t\t:get_bank_account_balance\t\t\t\t\t-- Get balance of a specified bank account'
+
+
+\echo 'Support functions:\n'
+\echo '\t\t\t:support.Get_Bank_Account_Balance(_BankAccountID)\t\t-- Get balance of a specified bank account'
+
+\echo 'Support views:\n'
+\echo '\t\t\tSELECT * FROM View_Monitor_All_Withdrawals;\t\t-- Get balance of a specified bank account'
+
+-- Administration queries
+
+\set settings 'SELECT name, setting, unit, context FROM pg_settings;'
+\set activity 'SELECT datname, pid, usename, application_name, client_addr, client_hostname, client_port, query, state FROM pg_stat_activity;'
+\set menu '\\i ':'local_path''temp-psqlrc'
+
+-- Development queries
+
+\set sp 'SHOW search_path;'
+\set clear '\\! clear;'
+\set ll '\\! ls -lrt;'
