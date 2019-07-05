@@ -5,7 +5,7 @@
 \set color_reset '\x1b[0m'
 \set support 'pg_temp'
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
-\set git_update '\\cd ':local_path_supportsqlprocedures' \\\\ \\! ./update.sh'
+\set git_update '\\cd ':local_path_supportsqlprocedures' \\\\ \\! ./update.sh \\\\ ':init
 
 
 
