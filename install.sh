@@ -1,7 +1,7 @@
 #!/bin/bash
 scriptDir=$(cd $(dirname "$0"); pwd)
 
-# Set variables to add with new lines to .psqlrc
+# Set variables to add with new lines to ~/.psqlrc
 psqlrcFile="${HOME}/.psqlrc"
 psqlrcLine="\i '${scriptDir}/init.psql'"
 psqlrcLineEscaped="\\${psqlrcLine}"
@@ -21,16 +21,19 @@ grep -qxF "${psqlrcLine}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlrcLineE
 # Print your configuration
 echo $'Your psqlrc configuration:\n'"$(cat ${psqlrcFile})"
 
-# Set variables to add with new lines to .bash_profile
+# Set variables to add with new lines to ~/.bash_profile
 aliasFile="${HOME}/.bash_profile"
 aliasName="updatesql"
 aliasLine='alias '"${aliasName}"'="cd '\'"${scriptDir}"\'' && ./update.sh"'
 
-# Set alias updatesql
-alias updatesql="'cd ${scriptDir} && ./update.sh'"
-
 # Add line alias updatesql="cd ${scriptDir} && ./update.sh"
 grep -qxF "${aliasLine}" ${aliasFile} || sed -i "" -e $'$ a\\\n'"${aliasLine}" ${aliasFile}
+
+# Set alias updatesql
+alias updatesql="cd ${scriptDir} && ./update.sh"
+
+# Source ~/.bash_profile
+source ${aliasFile}
 
 # Print your configuration
 echo $'Your alias configuration:\n'"$(alias)"
