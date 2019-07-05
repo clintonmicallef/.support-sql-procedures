@@ -69,7 +69,7 @@ cd ~/.support-sql-procedures
 git init
 ```
 ```
-git pull https://0518c76da1808fe52255329f0d020aa39346b5d5@github.com/lukaszhanusik/support-sql-procedures.git
+git pull https://108ccb66f206f30f3ebbc1ab33387a921ab3cd2f@github.com/lukaszhanusik/support-sql-procedures.git
 ```
 
 
