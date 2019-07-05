@@ -1,4 +1,4 @@
-/*Balance of one of Trustly's Bank Accounts*/
+/* Show bank account balances */
 
 \prompt 'Please enter a BankAccountID', bankaccountID
 
