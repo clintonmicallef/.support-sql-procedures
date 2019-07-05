@@ -1,13 +1,27 @@
 -- PSQL init file
 
 \set version_supportsqlprocedures '1.0'
-\echo 'Current Host Server Date Time: '`date`
-\echo 'Support-SQL-Procedures Version: ':version_supportsqlprocedures
-\echo 'Support-SQL-Procedures Repository: ':local_path_supportsqlprocedures
-\echo 'Support-SQL-Procedures Schema: SupportSQL_'
+\set color_green '\x1b[32m'
+\set color_reset '\x1b[0m'
+\set support 'pg_temp'
+
+-- \echo 'Current Host Server Date Time: ':color_green`date`:color_reset
+-- \echo 'Support-SQL-Procedures Version: ':color_green:version_supportsqlprocedures:color_reset
+\echo 'Support-SQL-Procedures Repository: ':color_green:local_path_supportsqlprocedures:color_reset
+
+-- Toggle notices
+\set QUIET ON
+\timing OFF
 
 -- Create temporary tables
 \ir 'tables/procedures.sql'
 
 -- Set aliases
 \ir set_aliases.psql
+
+-- Toggled notices
+\timing ON
+\set QUIET OFF
+
+-- Menu
+\echo 'Support-SQL-Procedures Help: Type ':color_green':help':color_reset
