@@ -1,3 +1,4 @@
+-- Get bank account balances
 CREATE OR REPLACE FUNCTION pg_temp.Get_Bank_Account_Balance(_BankAccountID integer)
   RETURNS TABLE(BankAccountID integer, EcoSysAccount character varying, BookKeepingBalance numeric, Datestamp timestamp with time zone, BankBalance numeric, Available numeric, BalanceDatestamp timestamp with time zone)
   LANGUAGE sql IMMUTABLE

@@ -1,3 +1,4 @@
+-- Highlight text in a notice
 CREATE OR REPLACE FUNCTION pg_temp.highlight(_text text)
  RETURNS void
  LANGUAGE plpgsql
