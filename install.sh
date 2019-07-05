@@ -10,6 +10,7 @@ psqlSetLocalPathEscaped="\\${psqlSetLocalPath}"
 
 # Create ~/.psqlrc file if does not exist. Add below lines at the end of the file
 touch ${psqlrcFile}
+echo "\timing" >> ${psqlrcFile}
 
 # Add line \set local_path_supportsqlprocedures '${scriptDir}'
 grep -qxF "${psqlSetLocalPath}" ${psqlrcFile} || sed -i "" -e $'$ a\\\n'"${psqlSetLocalPathEscaped}" ${psqlrcFile}
