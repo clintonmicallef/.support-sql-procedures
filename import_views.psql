@@ -1,0 +1,17 @@
+-- Import temporary views
+-- This is called from ./init.psql file
+-- :local_path_supportsqlprocedures is set in ~/.psqlrc
+\set QUIET ON
+\cd :local_path_supportsqlprocedures
+\a
+\t
+\o .temp_file.psql
+
+SELECT format('\ir ''%s''', format('%s/%s', 'views', FileName)) FROM SupportSQL_Views;
+
+\o
+\t
+\a
+
+\i .temp_file.psql
+\! rm .temp_file.psql

@@ -1,18 +1,18 @@
 -- Set aliases in PSQL session
 -- This is called from init.psql file
-
 -- :local_path_supportsqlprocedures is set in .psqlrc
 
+--- Set manual aliases
 \set help '\\i ':local_path_supportsqlprocedures'/help.sql'
 
---- Set SupportSQL_Procedures
+--- Set auto aliases for SupportSQL_Procedures
+\set QUIET ON
 \cd :local_path_supportsqlprocedures
 \a
 \t
 \o .temp_file.psql
 
-SELECT format('\set %s ''\\i %s''', substring(FileName, '(.*)\.sql$'), format('%s/%s/%s', :'local_path_supportsqlprocedures', 'procedures', FileName))
-  FROM SupportSQL_Procedures;
+SELECT format('\set %s ''\\i %s''', substring(FileName, '(.*)\.sql$'), format('%s/%s/%s', :'local_path_supportsqlprocedures', 'procedures', FileName)) FROM SupportSQL_Procedures;
 
 \o
 \t
