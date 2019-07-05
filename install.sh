@@ -27,7 +27,7 @@ aliasName="updatesql"
 aliasLine='alias '"${aliasName}"'="cd '\'"${scriptDir}"\'' && ./update.sh"'
 
 # Set alias updatesql
-alias updatesql="cd ${scriptDir} && ./update.sh"
+alias updatesql="'cd ${scriptDir} && ./update.sh'"
 
 # Add line alias updatesql="cd ${scriptDir} && ./update.sh"
 grep -qxF "${aliasLine}" ${aliasFile} || sed -i "" -e $'$ a\\\n'"${aliasLine}" ${aliasFile}
