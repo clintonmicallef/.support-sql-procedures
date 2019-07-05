@@ -1,0 +1,5 @@
+-- Update Git Repository in psql shell
+
+\cd :local_path_supportsqlprocedures
+\! ./update.sh
+:init

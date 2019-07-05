@@ -5,10 +5,10 @@
 \set color_green '\x1b[32m'
 \set color_reset '\x1b[0m'
 \set support 'pg_temp'
+
+-- Initialise and update environement
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
-\set git_update '\\! ./update.sh \\\\ ':init
-
-
+\set git_update '\\i ':local_path_supportsqlprocedures'/update.psql'
 
 -- Prevent disaply of loading notices
 -- \set QUIET yes
