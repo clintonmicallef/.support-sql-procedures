@@ -1,4 +1,5 @@
-CREATE TEMPORARY VIEW View_Monitor_All_Withdrawals AS (
+-- Show all withdrawals
+CREATE OR REPLACE TEMPORARY VIEW View_Monitor_All_Withdrawals AS (
   SELECT BankAccounts.BankAccountID,
          BankAccounts.EcoSysAccount,
          JWOWWInstances.NoOfInstances AS NoOfJWOWWs,
