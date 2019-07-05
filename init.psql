@@ -5,7 +5,7 @@
 \set color_reset '\x1b[0m'
 \set support 'pg_temp'
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
-\set git_update '\\cd ':local_path_supportsqlprocedures' \\\\ \\! ./update.sh \\\\ ':init
+\set git_update '\\cd ':local_path_supportsqlprocedures' \\\\ \\! ./update.sh \\\\ ':init''
 
 
 
@@ -35,3 +35,4 @@
 \! clear
 \echo 'Support-SQL-Procedures Repository: ':color_green:"local_path_supportsqlprocedures":color_reset
 \echo 'Support-SQL-Procedures Help: Type ':color_green':help':color_reset
+\echo 'Support-SQL-Procedures Update: Type ':color_green':git_update':color_reset
