@@ -1,3 +1,0 @@
---TEST
-
-SELECT * FROM Users LIMIT 1;
