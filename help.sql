@@ -1,9 +1,10 @@
--- Search and display SupportSQL_ tables
+/* Search and display SupportSQL_ tables */
+/* {description: "Search and display SupportSQL_ tables", category: "Manual"} */
 \set QUIET ON
+
 \pset expanded off
 
--- \prompt 'Please enter a ':color_green'keyword':color_reset' or press enter to see full list', keyword
-\prompt 'Please enter a keyword or press enter to see full list of definitions', keyword
+\prompt 'Please enter a search keyword or press enter to see full list of definitions', keyword
 
 SELECT Type,
        substring(FileName, '(.*)\.sql$') AS Alias,

@@ -1,4 +1,5 @@
-/*Cheks whether credit was pushed by merchant or ourselves*/
+/* Checks whether credit was pushed by merchant or ourselves */
+/* {description: "Checks  whether credit was pushed by merchant or ourselves ", category: "Risk"} */
 
 \prompt 'Please enter an OrderID', orderID
 
