@@ -97,6 +97,8 @@ Adds data to help.sql
 
 Since PSQLRC is linked to init, psqlrc is updated and user has access to new file.
 
+[diagram_flow]: https://github.com/lukaszhanusik/support-sql-procedures/blob/documentation/DIAGRAM_FLOW.jpg "diagram_flow"
+
 
 # Requirements
 
