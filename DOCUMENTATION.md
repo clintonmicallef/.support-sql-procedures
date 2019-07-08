@@ -19,7 +19,7 @@ The general scope of this project is to have quick and easily accessible GENERAL
 
 
 
-# Technical Specifications
+# TECHNICAL SPECIFICATIONS
 
 SQL Files are created as procedural queries, functions or views and pushed to Support-SQL-Repository in GITHUB.
 
@@ -68,7 +68,7 @@ This does two primary tasks:
 ```
 
 
-# Tech Flow
+# TECHNICAL FLOW
 
 Repository is downloaded to User's Home Directory as per ```README.md```.
 
@@ -97,8 +97,14 @@ Adds data to help.sql
 
 Since PSQLRC is linked to init, psqlrc is updated and user has access to new file.
 
+Here's our logo (hover to see the title text):
 
-# Requirements
+
+# TECHNICAL DIAGRAM/FLOW
+![alt text] (https://github.com/lukaszhanusik/support-sql-procedures/blob/documentation/DIAGRAM_FLOW.jpg "diagram_flow")
+
+
+# REQUIREMENTS
 
 IF (**A**) this is an edit to an already added SQL Procedure / function / View,
   A normal edit and commit to master is to be done.
