@@ -97,7 +97,6 @@ Adds data to help.sql
 
 Since PSQLRC is linked to init, psqlrc is updated and user has access to new file.
 
-Here's our logo (hover to see the title text):
 
 
 # TECHNICAL DIAGRAM/FLOW
