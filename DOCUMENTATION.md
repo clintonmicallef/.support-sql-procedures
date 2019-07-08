@@ -2,9 +2,9 @@
 
 Support-SQL-Repository is a shared library of SQL Files (Procedures, functions and views) stored in GITHUB. Interactive queries, where the user calls these procedures via aliases and enters any requested parameters.
 
-The purpose behind this is for a user to be able to quickly access and run queries, functions and views that are commonly used. This is done by using Aliases which are set to call a particular SQL file, such as "merchant_entrysteps" would be calling the file: SQLQueriesDir'merchant_entrysteps.sql.
+The purpose behind this is for a user to be able to quickly access and run queries, functions and views that are commonly used. This is done by using Aliases which are set to call a particular SQL file, such as "merchant_entrysteps" would be calling the file: merchant_entrysteps.sql within the local path for support-sql-repository.
 
-SQLQueriesDir is set in the .PSQLRC file to reflect a directory where said file {merchant_entrysteps.sql} would be stored, ex: ```/Users/benjaminschembri/Trustly/MyQueries/```
+SQLQueriesDir is set in the .PSQLRC file to reflect a directory where said file {merchant_entrysteps.sql} would be stored, ex: ```/Users/[username]/support-sql-repository```
 
 The .PSQLRC (_PostgreSQL Run Commands_) file, which is created in the Users' Home Directory, is run upon start-up of the DB environment. Any files and code written to this file are immediately executed upon initialising your Postgres Session.
 
@@ -13,7 +13,7 @@ The Support-SQL-Repository will help the support department gain quick access to
 IMP, this does not mean that the SQL language will be less of a requirement for each agent to grasp and gain as a skill. It would be indeed good practice for new / beginner SQL users to start our by writing their own queries as to get a good grasp of the language instead of using SQL Aliases from the Support-SQL-Repository.
 The general scope of this project is to have quick and easily accessible GENERALISED queries. Ones which are used for monitoring, general data compilation and so on. Other reporting queries or ones which require specific restrictions (parameters), etc, will have to be written by the individual agent (as per usual job practice).
 
-**The user will read the README.mk file where instructions on how to install, clone and use the repository are shared.**
+**The user will read the README.md file where instructions on how to install, clone and use the repository are shared.**
 
 
 
@@ -40,7 +40,7 @@ _Shell Files_:
 - update.sh
 ```
 
-and a miscellaneous SQL File ```-help.sql```
+and a miscellaneous SQL File ```help.sql```
 
 The Repository also stores SQL Files for the creation of _Temporary Tables_ for all 3 classes of SQL Files.
 
