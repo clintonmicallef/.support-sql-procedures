@@ -16,9 +16,6 @@ The general scope of this project is to have quick and easily accessible GENERAL
 **The user should read the README.md file where instructions on how to install, clone and use the repository are shared.**
 
 
-
-
-
 # TECHNICAL SPECIFICATIONS
 
 SQL Files are created as procedural queries, functions or views and pushed to Support-SQL-Procedures repository in GITHUB.
