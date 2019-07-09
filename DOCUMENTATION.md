@@ -76,39 +76,46 @@ It sets the SQLQueriesDir as the localpath where the repository was saved and se
 ```init.psql``` contains code to:
 
 **Initialise and update environement, including help facility.**
+
 Here ```\set``` is hard coded for fixed "system" files.
 Example alias: `git_update` which the user runs to pull from the GIT repository and re-runs the `.PSQLRC` file whenever a new commit has been deployed.
 
 **Create temporary tables.**
+
 Here we set a link to the 'Tables' folder within the repository and run the files within. These files create tables are populated by collecting the data from the repository's folders (/procedures, /functions, /views).
 _These temporary tables are an essential part of the repository and will be used by other scripts._
 
 **Import functions and views**
-Any function or view created are run here. We again set an import link (`\i`) to the two files: `import_functions.psql` and `import_views.psql` which in turn, collect data from the temporary tables and formats the literals in such a way to create another set of import links...
+
+Any function or view created are run here. We again set an import link (`\i`) to the two files: `import_functions.psql` and `import_views.psql` which in turn, collect data from the temporary tables and formats the literals in such a way to create another set of import links.
 {`\ir 'functions/get_bank_account_balance.sql'`}.
 The result calls the file within the Functions or Views Folder as can be seen above and runs the code within, thus creating the functions and/or views added to the folders.
 
 **Set aliases**
+
 Linking to `set_aliases.psql`, which in turn runs:
+
 {`SELECT format('\set %s ''\\i %s''', substring(FileName, '(.*)\.sql$'), format('%s/%s/%s', :'local_path_supportsqlprocedures', 'procedures', FileName)) FROM SupportSQL_Procedures;
 `},
+
 and outputs a string such as:
+
 {`\set bank_account_balance '\\i /Users/benjaminschembri/.support-sql-procedures/procedures/bank_account_balance.sql'`}.
 As `init.psql` is referred from the `.PSQLRC` file, these `\set` assignments are linked here thus creating aliases referring to the particular SQL file within the repository.
+
 
 **Displays a start-up Menu**
 
 
 # REQUIREMENTS
 
--
-A Procedure / Function / View is to be added as a new file within the respective folder.
--
-The code is to be written following the guidelines and templates as per **Support 2nd Line** Confluence when adding to files to Support-SQL-Procedures repository.
--
-Pull requests should be used according to the Repository owner's **workflow guidelines**
--
-At no point should a commit directly to Master disrupt the work flow of users on this repository.
+- A Procedure / Function / View is to be added as a new file within the respective folder.
+
+- The code is to be written following the guidelines and templates as per **Support 2nd Line** Confluence when adding to files to Support-SQL-Procedures repository.
+
+- Pull requests should be used according to the Repository owner's **workflow guidelines**
+
+- At no point should a commit directly to Master disrupt the work flow of users on this repository.
 
 
 # TECHNICAL DIAGRAM/FLOW
