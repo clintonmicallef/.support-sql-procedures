@@ -70,4 +70,12 @@ git_remote()
   git remote set-url origin --add https://${GIT_USER_NAME}@bitbucket.org/TrustlySupport/support-sql-procedures.git
   # Display if all remotes. You should see 2 push (GitHub, BitBucket) and only 1 fetch (GitHub)
   git remote -v
+    # Config should look like this
+    # origin	https://github.com/lukaszhanusik/support-sql-procedures.git (fetch)
+    # origin	https://lukaszhanusik@bitbucket.org/TrustlySupport/support-sql-procedures.git (push)
+    # origin	https://github.com/lukaszhanusik/support-sql-procedures.git (push)
+    # origin-bitbucket	https://lukaszhanusik@bitbucket.org/TrustlySupport/support-sql-procedures.git (fetch)
+    # origin-bitbucket	https://lukaszhanusik@bitbucket.org/TrustlySupport/support-sql-procedures.git (push)
+    # origin-github	https://lukaszhanusik@github.com/lukaszhanusik/support-sql-procedures.git (fetch)
+    # origin-github	https://lukaszhanusik@github.com/lukaszhanusik/support-sql-procedures.git (push)
 }
