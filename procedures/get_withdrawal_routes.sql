@@ -1,4 +1,4 @@
-/*Find alternative payout routes for a BankWithdrawalID*/
+/* Find alternative payout routes for a BankWithdrawalID */
 
 \prompt 'Please enter a BankWithdrawalID', bankwithdrawalID
 

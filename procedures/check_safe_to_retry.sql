@@ -1,5 +1,5 @@
-/*Query returns TRUE or FALSE to whether BankWithdrawal is safe to be retried
-  Checks bankwithdrawal after whether it was confirmed and BankLedger Scans*/
+/* Query returns TRUE or FALSE to whether BankWithdrawal is safe to be retried
+   Checks the following bankwithdrawal whether it was confirmed and BankLedger Scans */
 
 \prompt 'Please enter a BankWithdrawalID', bankwithdrawalID
 

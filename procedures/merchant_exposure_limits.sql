@@ -1,4 +1,4 @@
-/*Exoposure Limits of a Merchant*/
+/* Exoposure Limits of a Merchant */
 
 \prompt 'Please enter a Processing Account', processingaccount
 

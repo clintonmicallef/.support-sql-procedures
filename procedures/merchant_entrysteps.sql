@@ -1,4 +1,4 @@
-/*All entrysteps active for a merchant*/
+/* All entrysteps active for a merchant */
 
 \prompt 'Please enter a ProcessingAccount', processingaccount
 \prompt 'Please enter a category (deposit / withdraw)', category

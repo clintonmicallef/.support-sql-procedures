@@ -1,4 +1,4 @@
-/*Diagnostics of an EntryStep, Last Order Steps and aggregates*/
+/* Diagnostics of an EntryStep, Last Order Steps and aggregates */
 
 \prompt 'Please enter an EntrystepID', entrystepID
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', timeinput

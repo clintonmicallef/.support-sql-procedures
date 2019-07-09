@@ -1,4 +1,4 @@
-/*Information on whether an Enduser has failed deposits (graylisted)*/
+/* Information on whether an Enduser has failed deposits (graylisted) */
 
 \prompt 'Please enter a PersonID', personid
 

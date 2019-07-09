@@ -1,4 +1,4 @@
-/*Statistical information on deposit settlement times for an entrystep*/
+/* Statistical information on deposit settlement times for an entrystep */
 
 \prompt 'Please enter an EntrystepID', entrystepID
 

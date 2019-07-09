@@ -1,4 +1,4 @@
-/*Queue of a specific EcoSysAccount*/
+/* Queue of a specific EcoSysAccount */
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount
 

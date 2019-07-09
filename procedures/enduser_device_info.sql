@@ -1,4 +1,4 @@
-/*Information on device end user used during an Order*/
+/* Information on the device end user used during an Order */
 
 \prompt 'Please enter an OrderID', orderid
 

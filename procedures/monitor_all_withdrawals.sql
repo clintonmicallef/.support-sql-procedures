@@ -1,4 +1,4 @@
-/*All Payouts Queue*/
+/* All Payouts Queue */
 
 \pset expanded off
 

@@ -1,9 +1,9 @@
 /* Sets RetryNow for withdrawals for parameters: EcoSysAccount, ProcessingAccount, Delay, ToBank */
 /*
-  FUNCTION sets retrynow with Parameters: EcoSysAccount, ProcessingAccount, Delay and/or enduser's Receiving Bank
-  Allows user to specify the processing account or leave as NULL
-  Allows user to speicify the delay of a payout or leave as NULL
-  Allows user to specify the receiving bank or  leave as NULL
+   FUNCTION sets retrynow with Parameters: EcoSysAccount, ProcessingAccount, Delay and/or enduser's Receiving Bank
+   Allows user to specify the processing account or leave as NULL
+   Allows user to speicify the delay of a payout or leave as NULL
+   Allows user to specify the receiving bank or  leave as NULL
 */
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount

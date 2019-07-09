@@ -1,4 +1,4 @@
-/*Events an Order went through*/
+/* Events an Order went through */
 
 \prompt 'Please enter an OrderID', orderid
 

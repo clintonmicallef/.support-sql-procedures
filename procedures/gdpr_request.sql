@@ -1,6 +1,6 @@
-/*Provides All information needed for GDPR requirements
-  Gets PersonID of an end user
-  Not to author: Query needs updating when new KYC model is launched with KYC schema*/
+/* Provides All information needed for GDPR requirements
+   Gets PersonID of an end user
+   Not to author: Query needs updating when new KYC model is launched with KYC schema */
 
 \prompt 'Please enter an OrderID', orderID
 

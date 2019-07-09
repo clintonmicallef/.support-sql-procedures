@@ -1,5 +1,7 @@
--- Check active withdrawal queues
+/* Check active withdrawal queues */
+
 \set QUIET ON
+
 \pset expanded off
 
 SELECT BankWithdrawals.SendingBankAccountID,

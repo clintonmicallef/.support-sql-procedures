@@ -1,4 +1,4 @@
-/*All steps, requests and responses done in iFrame*/
+/* All steps, requests and responses done in iFrame */
 
 \prompt 'Please enter an OrderID', orderid
 

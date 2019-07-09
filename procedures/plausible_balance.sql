@@ -1,4 +1,4 @@
-/*All deposit of enduser based on PersonID along with Balance of end user's bank account to determine Plausible Balance*/
+/* All deposit of enduser based on PersonID along with Balance of end user's bank account to determine Plausible Balance */
 
 \prompt 'Please enter the PersonID', personID
 

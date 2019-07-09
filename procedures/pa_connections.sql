@@ -1,4 +1,4 @@
-/*Checks whether a connection of processing accounts for one Processing Account exists*/
+/* Checks whether a connection of processing accounts for one Processing Account exists */
 
 \prompt 'Please enter the ProcessingAccount', processingaccount
 

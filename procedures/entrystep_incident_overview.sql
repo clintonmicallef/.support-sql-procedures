@@ -1,4 +1,4 @@
-/*Extended information on EntryStep performance including conversion*/
+/* Extended information on EntryStep performance including conversion */
 
 \prompt 'Please enter the EntrystepID', entrystepID
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', delay

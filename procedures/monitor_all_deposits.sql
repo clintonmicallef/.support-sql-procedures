@@ -1,4 +1,4 @@
-/*Deposit Orders & Entrystep Activity*/
+/* Deposit Orders & Entrystep Activity */
 
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', input
 
