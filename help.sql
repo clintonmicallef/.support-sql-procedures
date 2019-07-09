@@ -10,11 +10,12 @@ SELECT Type,
        substring(FileName, '(.*)\.sql$') AS Alias,
        Comment
   FROM (
-    SELECT 'Procedure' AS Type, FileName, Comment FROM pg_temp.SupportSQL_Procedures
-    UNION ALL
+    SELECT 'Procedure'::text AS Type, FileName, Comment FROM pg_temp.SupportSQL_Procedures
+    --Removing Functions & Views from Help due to redundant functionality at this point
+    /*UNION ALL
     SELECT 'Function' AS Type, FileName, Comment FROM pg_temp.SupportSQL_Functions
     UNION ALL
-    SELECT 'View' AS Type, FileName, Comment FROM pg_temp.SupportSQL_Views
+    SELECT 'View' AS Type, FileName, Comment FROM pg_temp.SupportSQL_Views*/
   ) AS SupportSQL_Schema
  WHERE TRUE
    AND (CASE WHEN NULLIF(:'keyword','') IS NOT NULL THEN format('%s %s', substring(FileName, '(.*)\.sql$'), Comment) ILIKE '%' || :'keyword' || '%' ELSE TRUE END)
