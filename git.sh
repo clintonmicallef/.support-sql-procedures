@@ -54,4 +54,20 @@ git_update()
   done
 }
 
+# Run git_config() and try to set the user details
 git_config ${gitUserEmail} ${gitUserName}
+
+
+
+# Declare function to setup remotes for the repository
+git_remote()
+{
+  # Export your username (assuming you have the same on all platforms)
+  # On Trustly GitHub, user.name should be set as Firstname Lastname, this can be changed for each repository locally or set globally
+  GIT_USER_NAME=$USER
+  git remote add origin-github https://${GIT_USER_NAME}@bitbucket.org/TrustlySupport/support-sql-procedures.git
+  git remote add origin-bitbucket https://${GIT_USER_NAME}@bitbucket.org/TrustlySupport/support-sql-procedures.git
+  git remote set-url origin --add https://${GIT_USER_NAME}@bitbucket.org/TrustlySupport/support-sql-procedures.git
+  # Display if all remotes. You should see 2 push (GitHub, BitBucket) and only 1 fetch (GitHub)
+  git remote -v
+}
