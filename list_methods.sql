@@ -9,8 +9,8 @@
 SELECT Type,
        substring(Filename, '(.*)\.sql$') AS Filename,
        CASE
-          WHEN Type = 'Procedure' THEN format(':%s', substring(Filename, '(.*)\.sql$')),
-          WHEN Type = 'Function' THEN format('pg_temp.%s', substring(Filename, '(.*)\.sql$')),
+          WHEN Type = 'Procedure' THEN format(':%s', substring(Filename, '(.*)\.sql$'))
+          WHEN Type = 'Function' THEN format('pg_temp.%s(_parameters)', substring(Filename, '(.*)\.sql$'))
           WHEN Type = 'View' THEN format('%s', substring(Filename, '(.*)\.sql$'))
        END AS Invocation,
        Comment
