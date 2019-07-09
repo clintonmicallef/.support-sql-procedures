@@ -10,6 +10,7 @@
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
 \set git_update '\\i ':local_path_supportsqlprocedures'/update.psql'
 \set help '\\i ':local_path_supportsqlprocedures'/help.sql'
+\set list_methods '\\i ':local_path_supportsqlprocedures'/list_methods.sql'
 
 -- Prevent disaply of loading notices
 -- \set QUIET yes
