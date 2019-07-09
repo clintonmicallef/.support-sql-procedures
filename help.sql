@@ -7,7 +7,7 @@
 \prompt 'Please enter a search keyword or press enter to see full list of definitions', keyword
 
 SELECT Type,
-       substring(FileName, '(.*)\.sql$') AS Alias,
+       (':' || substring(FileName, '(.*)\.sql$')) AS Alias,
        Comment
   FROM (
     SELECT 'Procedure'::text AS Type, FileName, Comment FROM pg_temp.SupportSQL_Procedures
