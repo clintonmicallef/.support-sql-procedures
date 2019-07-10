@@ -4,6 +4,13 @@
 
 \pset expanded off
 
+\echo '\n'
+\echo '***LEGEND***'
+\echo 'MONITOR: High non-DONE rate. Keep an eye on the Entrystep'
+\echo 'ALERT: No DONE orders from last 10 orders, Check Entrystep!'
+\echo 'WAIT_SERVER: No DONE orders from last 15 orders and status in WAIT_SERVER '
+\echo '\n'
+
 WITH EntrystepsHealth AS(
    SELECT Entrysteps.entrystepid AS EntrystepID,
           Entrysteps.name AS Name,
