@@ -4,24 +4,24 @@ Share you SSH public key via message on Slack to Lukasz or Team Leader (to be se
 
 Open new terminal window and copy the contents of the public key to the clipboard using command below:
 
-```
+```bash
 pbcopy < ~/.ssh/id_rsa.pub
 ```
 
 Your key is being manually added to the list of trusted users.
 Create new directory with the repository and initiate Git.
 
-```
+```bash
 mkdir ~/.test_bitbucket && cd ~/.test_bitbucket
 ```
-> ```
+```
 $ Initialized empty Git repository in /Users/lukaszhanusik/.test_bitbucket/.git/
 ```
 
 You can download the repository by running:
 > **NOTE** Confirm with the person on Slack your keys are already added : )
 
-```
+```bash
 git pull git@bitbucket.org:TrustlySupport/support-sql-procedures.git
 ```
 
@@ -34,10 +34,11 @@ Are you sure you want to continue connecting (yes/no)? yes
 
 BitBucket added to the list of known hosts.
 Your repository is pulling the files...
+Maybe you will be asked to give the password to this key. It is the same password you are using to log into the Tunnel _(first password when starting new tunnel...)_
 
 ```
-Warning: Permanently added 'bitbucket.org,18.205.93.1' (RSA) to the list of known hosts.
-Enter passphrase for key '/Users/lukaszhanusik/.ssh/id_rsa':
+$ Warning: Permanently added 'bitbucket.org,18.205.93.1' (RSA) to the list of known hosts.
+$ Enter passphrase for key '/Users/lukaszhanusik/.ssh/id_rsa':
 remote: Counting objects: 523, done.
 remote: Compressing objects: 100% (258/258), done.
 remote: Total 523 (delta 260), reused 513 (delta 254)
