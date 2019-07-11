@@ -1,0 +1,50 @@
+### Quick config notes to work with BitBucket read-only repos
+
+Share you SSH public key via message on Slack to Lukasz or Team Leader (to be set on release meeting)
+
+Open new terminal window and copy the contents of the public key to the clipboard using command below:
+
+```
+pbcopy < ~/.ssh/id_rsa.pub
+```
+
+Your key is being manually added to the list of trusted users.
+Create new directory with the repository and initiate Git.
+
+```
+mkdir ~/.test_bitbucket && cd ~/.test_bitbucket
+```
+> ```
+$ Initialized empty Git repository in /Users/lukaszhanusik/.test_bitbucket/.git/
+```
+
+You can download the repository by running:
+> **NOTE** Confirm with the person on Slack your keys are already added : )
+
+```
+git pull git@bitbucket.org:TrustlySupport/support-sql-procedures.git
+```
+
+> **NOTE** When you connect for the first time to BitBucket, SSH prompts you to verify the authenticity of the server. It is just an added security measure to verify the server using the RSA key fingerprint. You can type **yes** and proceed. _This is a one time verification._
+```
+$ The authenticity of host 'bitbucket.org (18.205.93.1)' can't be established.
+RSA key fingerprint is SHA256:zzXQOXS[RBEiUtuE8AikJYKwbHaxvSc0ojez9]YXaGp1A.
+Are you sure you want to continue connecting (yes/no)? yes
+```
+
+BitBucket added to the list of known hosts.
+Your repository is pulling the files...
+
+```
+Warning: Permanently added 'bitbucket.org,18.205.93.1' (RSA) to the list of known hosts.
+Enter passphrase for key '/Users/lukaszhanusik/.ssh/id_rsa':
+remote: Counting objects: 523, done.
+remote: Compressing objects: 100% (258/258), done.
+remote: Total 523 (delta 260), reused 513 (delta 254)
+Receiving objects: 100% (523/523), 248.64 KiB | 553.00 KiB/s, done.
+Resolving deltas: 100% (260/260), done.
+From bitbucket.org:TrustlySupport/support-sql-procedures
+ * branch            HEAD       -> FETCH_HEAD
+ ```
+
+**Success!**
