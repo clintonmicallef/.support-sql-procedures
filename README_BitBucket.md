@@ -13,8 +13,10 @@ Your key is being manually added to the list of trusted users.
 Create new directory with the repository and initiate Git.
 
 ```bash
-mkdir ~/.test_bitbucket && cd ~/.test_bitbucket
+mkdir ~/.test_bitbucket && cd ~/.test_bitbucket && git init
 ```
+
+You should see your repository was initialised:
 ```
 $ Initialized empty Git repository in /Users/lukaszhanusik/.test_bitbucket/.git/
 ```
