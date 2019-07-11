@@ -1,12 +1,13 @@
-### Quick config notes to work with BitBucket read-only repos
+### Quick config notes to work with BitBucket read-only repositories via SSH
 
-Share you SSH public key via message on Slack to Lukasz or Team Leader (to be set on release meeting)
-
-Open new terminal window and copy the contents of the public key to the clipboard using command below:
+Open new terminal window and run the command below.
+It will copy the contents of the public key to the clipboard.
 
 ```bash
 pbcopy < ~/.ssh/id_rsa.pub
 ```
+
+Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
 
 Your key is being manually added to the list of trusted users.
 Create new directory with the repository and initiate Git.
