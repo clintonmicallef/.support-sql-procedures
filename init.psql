@@ -10,6 +10,7 @@
 \set init  '\\i ':local_path_supportsqlprocedures'/init.psql'
 \set git_update '\\i ':local_path_supportsqlprocedures'/update.psql'
 \set help '\\i ':local_path_supportsqlprocedures'/help.sql'
+\set definition '\\i ':local_path_supportsqlprocedures'/definition.psql'
 \set list_methods '\\i ':local_path_supportsqlprocedures'/list_methods.sql'
 
 -- Prevent disaply of loading notices
@@ -38,4 +39,5 @@
 \! clear
 \echo 'Support-SQL-Procedures Repository: ':color_green:"local_path_supportsqlprocedures":color_reset
 \echo 'Support-SQL-Procedures Help: Type ':color_green':help':color_reset
+\echo 'Support-SQL-Procedures Definitions: Type ':color_green':definition':color_reset
 \echo 'Support-SQL-Procedures Update: Type ':color_green':git_update':color_reset

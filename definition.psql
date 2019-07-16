@@ -1,0 +1,4 @@
+\cd :local_path_supportsqlprocedures/procedures
+\! echo Please enter an alias:
+\! read file
+\! cat $file".sql"
