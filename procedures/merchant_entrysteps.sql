@@ -50,14 +50,9 @@ SELECT DistinctEntryStepIdentifiers.Username,
                                  AND EntryStepExclusionList.UserCategoryID = Users.UserCategoryID
                                  AND EntryStepExclusionList.EntryStepCategory = EntrySteps.Category
                               ))
-         JOIN UserSettings ON UserSettings.UserID = Users.UserID
         WHERE Users.Username = :'processingaccount' --CHANGE USERNAME
           AND (EntrySteps.Disabled IS NULL OR users.username = 'apitest')
           AND (EntrySteps.Unlisted IS FALSE OR users.username = 'apitest')
-          AND (
-            NOT (UserSettings.RequireFetchAccountFromBank)
-             OR EXISTS(SELECT 1 FROM Get_Account_Selector(EntrySteps.EntryStepID, Users.UserID))
-           )--(CASE WHEN UserSettings.RequireFetchAccountFromBank THEN EntrySteps.Name != 'Other bank' ELSE NULL END)
         ORDER BY EntrySteps.Identifier, COALESCE(UserEntrySteps.Allow::boolean, UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL) DESC,
               (CASE WHEN UserEntrySteps.UserEntryStepID IS NOT NULL THEN 1
                     WHEN UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL THEN 2
