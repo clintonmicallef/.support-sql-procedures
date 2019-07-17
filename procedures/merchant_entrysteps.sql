@@ -33,24 +33,26 @@ SELECT DistinctEntryStepIdentifiers.Username,
                     ELSE EntrySteps.IsInstant
                      END) AS IsInstant,
               EntrySteps.Priority,
-              COALESCE(UserEntrySteps.Allow::boolean,
-              UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL
-            ) AS Allow,
-            Users.Username
+              (CASE WHEN UserSettings.RequireFetchAccountFromBank IS TRUE AND Entrysteps.Name IN ('Other bank', 'IBAN/SEPA') THEN 'f'
+                    WHEN UserSettings.RequireFetchAccountFromBank IS TRUE AND (SELECT 1 FROM Get_Account_Selector(Entrysteps.EntrystepID, Users.UserID)) IS NULL THEN 'f' ELSE COALESCE(UserEntrySteps.Allow::boolean, UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL)
+                     END) AS Allow,
+              Users.Username
          FROM Users
+         JOIN UserSettings ON UserSettings.UserID = Users.UserID
         CROSS JOIN EntrySteps
          LEFT JOIN Countries ON (Countries.CountryID = EntrySteps.CountryID)
          LEFT JOIN Banks ON (Banks.BankID = EntrySteps.BankID)
          LEFT JOIN UserEntrySteps ON (UserEntrySteps.EntryStepID = EntrySteps.EntryStepID AND UserEntrySteps.UserID = Users.UserID)
          LEFT JOIN UserEntryStepCountries ON (UserEntryStepCountries.UserID = Users.UserID AND UserEntryStepCountries.CountryID = EntrySteps.CountryID AND EntrySteps.Standard IS TRUE AND (UserEntryStepCountries.EnableRisky IS TRUE OR EntrySteps.Risky IS FALSE)
-               AND NOT EXISTS (
-                              SELECT 1
-                                FROM EntryStepExclusionList
-                               WHERE EntryStepExclusionList.CountryID = UserEntryStepCountries.CountryID
-                                 AND EntryStepExclusionList.UserCategoryID = Users.UserCategoryID
-                                 AND EntryStepExclusionList.EntryStepCategory = EntrySteps.Category
-                              ))
-        WHERE Users.Username = :'processingaccount' --CHANGE USERNAME
+          AND NOT EXISTS (
+            SELECT 1
+              FROM EntryStepExclusionList
+             WHERE EntryStepExclusionList.CountryID = UserEntryStepCountries.CountryID
+               AND EntryStepExclusionList.UserCategoryID = Users.UserCategoryID
+               AND EntryStepExclusionList.EntryStepCategory = EntrySteps.Category
+             )
+           )
+        WHERE Users.Username = :'processingaccount'
           AND (EntrySteps.Disabled IS NULL OR users.username = 'apitest')
           AND (EntrySteps.Unlisted IS FALSE OR users.username = 'apitest')
         ORDER BY EntrySteps.Identifier, COALESCE(UserEntrySteps.Allow::boolean, UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL) DESC,
@@ -58,7 +60,7 @@ SELECT DistinctEntryStepIdentifiers.Username,
                     WHEN UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL THEN 2
                      END)
         ) AS DistinctEntryStepIdentifiers
-  WHERE DistinctEntryStepIdentifiers.category = :'category' --CHOOSE CATEGORY
+  WHERE DistinctEntryStepIdentifiers.category = :'category'
     AND DistinctEntryStepIdentifiers.allow = 't'
-    --AND DistinctEntryStepIdentifiers.CountryName = 'Belgium'
-  ORDER BY DistinctEntryStepIdentifiers.CountryName ASC;
+  ORDER BY DistinctEntryStepIdentifiers.CountryName ASC
+;
