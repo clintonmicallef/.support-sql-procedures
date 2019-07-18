@@ -1,10 +1,10 @@
 ### Quick config notes to work with BitBucket read-only repositories via SSH
 
 Open new terminal window and run the command below.
-It will copy the contents of the public key to the clipboard.
+It will display the public key in the terminal.
 
 ```bash
-pbcopy < ~/.ssh/id_rsa.pub
+cat ~/.ssh/id_rsa.pub
 ```
 
 Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
