@@ -43,13 +43,13 @@ WITH EnduserOrders AS(
              Transfers.Amount,
              EnduserOrders.Balance,
              Transfers.Currency,
-             COALESCE(MerchantCreditedOrders.SuperUser, TrustlyCreditedOrders.fixedby, 'System'::text) AS Credited_By,
+             (CASE WHEN Transfers.TriggeredCredit IS NOT NULL THEN COALESCE(MerchantCreditedOrders.SuperUser, TrustlyCreditedOrders.fixedby, 'System'::text) ELSE NULL END) AS Credited_By,
              Transfers.TriggeredCredit::timestamp(0) AS triggered_credit,
              Transfers.TriggeredDebit::timestamp(0) AS Triggered_debit,
              Transfers.TriggeredRefund::timestamp(0) AS Triggered_refund,
              Transfers.TriggeredSettle::timestamp(0) AS Triggered_settled,
-             ExceededExposureLimits.consumedlimit,
-             ExceededExposureLimits.maxlimit,
+             ROUND(ExceededExposureLimits.consumedlimit,2),
+             ROUND(ExceededExposureLimits.maxlimit,2),
              decisionlog.Reason,
              array_agg(Orders.EnduserID) AS EnduserID
         FROM Orders
