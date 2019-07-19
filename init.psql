@@ -16,7 +16,6 @@
 -- Prevent disaply of loading notices
 -- \set QUIET yes
 \set QUIET ON
-\timing ON
 
 -- Create temporary tables
 \ir 'tables/procedures.sql'
@@ -32,7 +31,7 @@
 
 -- Set quite mode back to normal
 -- \unset QUIET
-\timing OFF
+\timing ON
 \set QUIET OFF
 
 -- Menu
