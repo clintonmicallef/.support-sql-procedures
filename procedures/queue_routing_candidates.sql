@@ -86,7 +86,7 @@ WITH Queued_Withdrawals AS (
           )
         )
         SELECT Queued_Withdrawals.*,
-               (SELECT array_agg(Queued_Withdrawals_SBA_Candidates.EcoSysAccount)
+               (SELECT (array_agg(Queued_Withdrawals_SBA_Candidates.EcoSysAccount))[1:5]
                   FROM Queued_Withdrawals_SBA_Candidates
                  WHERE Queued_Withdrawals_SBA_Candidates.BankWithdrawalID = Queued_Withdrawals.BankWithdrawalID) AS SBA_Candidates
           FROM Queued_Withdrawals
