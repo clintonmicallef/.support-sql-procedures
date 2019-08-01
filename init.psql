@@ -13,9 +13,10 @@
 \set definition '\\i ':local_path_supportsqlprocedures'/definition.psql'
 \set list_methods '\\i ':local_path_supportsqlprocedures'/list_methods.sql'
 
--- Prevent disaply of loading notices
+-- Prevent disply of loading notices and prevent timing
 -- \set QUIET yes
 \set QUIET ON
+\timing OFF
 
 -- Create temporary tables
 \ir 'tables/procedures.sql'
