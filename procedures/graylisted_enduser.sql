@@ -22,7 +22,7 @@ SELECT transfers.transferid,
        forgivenfailedtransfers.datestamp::timestamp(0) AS forgiven,
        forgivenfailedtransfers.datestamp IS NULL AND (transfersystems.name = ANY (ARRAY['DirectRouting'::text, 'Autogiro'::text])) AS showforgivebutton,
        eventnamechainbalances.personid AS personid,
-       (CASE WHEN forgivenfailedvolumes.PersonID = eventnamechainbalances.personid AND forgivenfailedvolumes.UserID IS NOT NULL THEN 'FORGIVEN_LOCALLY'
+       (CASE WHEN forgivenfailedvolumes.PersonID = eventnamechainbalances.personid AND forgivenfailedvolumes.UserID IS NOT NULL THEN 'FORGIVEN_LOCALLY: ' || (SELECT Username FROM Users WHERE forgivenfailedvolumes.UserID = Users.UserID)
              WHEN forgivenfailedvolumes.PersonID = eventnamechainbalances.personid AND forgivenfailedvolumes.UserID IS NULL THEN 'FORGIVEN_GLOBALLY'
              ELSE 'GRAYLISTED' END) as BlockType
   FROM transfers
