@@ -1,4 +1,4 @@
-/* All routing options for entire Queue */
+/* All routing options for entire Withdrawals Queue */
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount
 
