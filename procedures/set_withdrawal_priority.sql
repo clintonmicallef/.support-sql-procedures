@@ -22,7 +22,7 @@ WITH RETRY AS(
      AND View_All_Bank_Withdrawals.BankWithdrawalType IN ('EXPRESS')
      AND View_All_Bank_Withdrawals.Datestamp >= now() - '4 days'::interval
      --AND now() - View_All_Bank_Withdrawals.Datestamp >= :'delay'::interval --DELAY
-     AND (SELECT CASE WHEN NULLIF(:'delay','') IS NOT NULL THEN now() - View_All_Bank_Withdrawals.Datestamp >= :'delay'::interval ELSE 'TRUE' END)
+     AND (SELECT CASE WHEN NULLIF(:'delay','') IS NOT NULL THEN now() - View_All_Bank_Withdrawals.Datestamp >= :'delay' ELSE 'TRUE' END)
      AND BankWithdrawals.retrynow IS NULL
      AND BankWithdrawals.Attempts = 1
      AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Username = :'processingaccount' ELSE 'TRUE' END)
