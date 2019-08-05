@@ -8,7 +8,7 @@
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount
 \prompt 'Please enter a Processing Account or press enter to continue', processingaccount
-\prompt 'Please enter a delay (including unit of time example: 30 mins) or press enter to continue', delay
+\prompt 'Please enter a delay (including unit of time example: 30 mins) or enter "0 mins" to select ALL', delay
 \prompt 'Please enter a receiving bank or press enter to continue', tobank
 
 \pset expanded off
@@ -21,8 +21,8 @@ WITH RETRY AS(
      AND View_All_Bank_Withdrawals.BankWithdrawalState = 'QUEUED'
      AND View_All_Bank_Withdrawals.BankWithdrawalType IN ('EXPRESS')
      AND View_All_Bank_Withdrawals.Datestamp >= now() - '4 days'::interval
-     --AND now() - View_All_Bank_Withdrawals.Datestamp >= :'delay'::interval --DELAY
-     AND (SELECT CASE WHEN NULLIF(:'delay','') IS NOT NULL THEN now() - View_All_Bank_Withdrawals.Datestamp >= :'delay' ELSE 'TRUE' END)
+     AND now() - View_All_Bank_Withdrawals.Datestamp >= :'delay'::interval --DELAY
+     --AND (SELECT CASE WHEN NULLIF(:'delay','') IS NOT NULL THEN (now() - View_All_Bank_Withdrawals.Datestamp >= (:'delay')::interval) ELSE TRUE END)
      AND BankWithdrawals.retrynow IS NULL
      AND BankWithdrawals.Attempts = 1
      AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Username = :'processingaccount' ELSE 'TRUE' END)
