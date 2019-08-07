@@ -6,7 +6,7 @@ It will display the public key in the terminal.
 ```bash
 cat ~/.ssh/id_rsa.pub
 ```
-If the error, "File not found" is displayed, please follow the below steps: 
+If the error, "No such file or directory" is displayed, please follow the below steps: 
 1. Open a new Terminal Window
 2. Enter: ```ssh-keygen``` and press ENTER
 3. Type: ```/Users/[yourusername]/.ssh/id_rsa```. 
