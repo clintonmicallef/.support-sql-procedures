@@ -6,19 +6,15 @@ It will display the public key in the terminal.
 ```bash
 cat ~/.ssh/id_rsa.pub
 ```
-
-Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
-
 If an error is displayed, example: "File not found", please follow the below steps: 
 1. Open a new Terminal Window
 2. Enter: ```ssh-keygen``` and press ENTER
 3. Type: ```/Users/[CHANGE->yourhomefolderusername]/.ssh/id_rsa
 4. Enter a password (any password) and repeat when prompted
+_You should see a result starting with: `The key fingerprint is:`_
+5. Re-Type: ```cat ~/.ssh/id_rsa.pub``` and continue.
 
-You should see a result starting with: `The key fingerprint is:`
-
-5. Return back to: ```cat ~/.ssh/id_rsa.pub```
-
+Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
 
 Your key is being manually added to the list of trusted users.
 Create new directory with the repository and initiate Git.
