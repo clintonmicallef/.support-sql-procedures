@@ -6,13 +6,14 @@ It will display the public key in the terminal.
 ```bash
 cat ~/.ssh/id_rsa.pub
 ```
-If an error is displayed, example: "File not found", please follow the below steps: 
+If the error, "File not found" is displayed, please follow the below steps: 
 1. Open a new Terminal Window
 2. Enter: ```ssh-keygen``` and press ENTER
-3. Type: ```/Users/[CHANGE->yourhomefolderusername]/.ssh/id_rsa
-4. Enter a password (any password) and repeat when prompted
-_You should see a result starting with: `The key fingerprint is:`_
-5. Re-Type: ```cat ~/.ssh/id_rsa.pub``` and continue.
+3. Type: ```/Users/[yourusername]/.ssh/id_rsa```. 
+   _To get your username, open a new terminal window and type: ```whoami```  and copy the result._
+4. Enter a password (any password) and repeat when prompted.
+5. Once done you should see a result starting with: `The key fingerprint is:`
+6. Re-Type: ```cat ~/.ssh/id_rsa.pub``` and continue
 
 Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
 
