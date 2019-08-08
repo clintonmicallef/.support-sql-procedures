@@ -10,14 +10,14 @@ WITH EnduserOrders AS(
    FROM BankOrders
    JOIN Orders ON Orders.OrderID = BankOrders.OrderID
    JOIN Users ON Users.UserID = Orders.UserID
-  WHERE TransferBankAccountID = :'transferbankaccountID'
+  WHERE TransferBankAccountID IN (:'transferbankaccountID')
     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
   UNION
  SELECT OrderBankAccounts.OrderID, Users.Username, NULL::bigint, 'NULL'::text
    FROM OrderBankAccounts
    JOIN Orders ON Orders.OrderID = OrderBankAccounts.OrderID
    JOIN Users ON Users.UserID = Orders.UserID
-  WHERE TransferBankAccountID = :'transferbankaccountID'
+  WHERE TransferBankAccountID IN (:'transferbankaccountID')
     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
   ),
   MerchantCreditedOrders AS(
