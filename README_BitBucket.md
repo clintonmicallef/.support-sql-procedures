@@ -6,6 +6,14 @@ It will display the public key in the terminal.
 ```bash
 cat ~/.ssh/id_rsa.pub
 ```
+If the error, "No such file or directory" is displayed, please follow the below steps: 
+1. Open a new Terminal Window
+2. Enter: ```ssh-keygen``` and press ENTER
+3. Type: ```/Users/[yourusername]/.ssh/id_rsa```. 
+   _To get your username, open a new terminal window and type: ```whoami```  and copy the result._
+4. Enter a password (any password) and repeat when prompted.
+5. Once done you should see a result starting with: `The key fingerprint is:`
+6. Re-Type: ```cat ~/.ssh/id_rsa.pub``` and continue
 
 Share this SSH public key with Lukasz or Team Leader who initiated the process and paste a clipboard in a private Slack chat. (`cmd + v`)
 
