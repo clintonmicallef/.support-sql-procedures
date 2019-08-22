@@ -1,6 +1,6 @@
 /* PROCEDURE:Shows all activty of the end user's particular bank account (TransferBankAccountID) with Trustly */
 
-\prompt 'Please enter a TransferBankAccountID', transferbankaccountID
+\prompt 'Please enter a TransferBankAccountID (one or more)', transferbankaccountID
 \prompt 'Please enter a ProcessingAccount or press enter to continue', processingaccount
 
 \pset expanded off
@@ -34,8 +34,10 @@ WITH EnduserOrders AS(
         WHERE OrderID IN  (SELECT DISTINCT OrderID FROM EnduserOrders)
       )
       SELECT Users.Username AS ProcessingAccount,
+             OrdersKYCData.Name AS Enduser_name,
              EnduserOrders.PersonID,
              Transfers.OrderID AS OrderID,
+             Orders.EntrystepID,
              TransferTypes.name AS TransferType,
              Transfers.datestamp::timestamp(0) AS Initiated_On,
              TransferStates.Name AS TransferState,
@@ -48,12 +50,13 @@ WITH EnduserOrders AS(
              Transfers.TriggeredDebit::timestamp(0) AS Triggered_debit,
              Transfers.TriggeredRefund::timestamp(0) AS Triggered_refund,
              Transfers.TriggeredSettle::timestamp(0) AS Triggered_settled,
-             ROUND(ExceededExposureLimits.consumedlimit,2),
-             ROUND(ExceededExposureLimits.maxlimit,2),
-             decisionlog.Reason,
+             ROUND(ExceededExposureLimits.consumedlimit,2) AS Consumedimit,
+             ROUND(ExceededExposureLimits.maxlimit,2) AS MaxLimit,
+             decisionlog.Reason AS Risk_Log,
              array_agg(Orders.EnduserID) AS EnduserID
         FROM Orders
         JOIN EnduserOrders ON EnduserOrders.OrderID = Orders.OrderID
+        LEFT JOIN OrdersKYCData ON OrdersKYCData.OrderID = Orders.OrderID
         JOIN Transfers ON Transfers.OrderID = Orders.OrderID AND Transfers.TransferTypeID IN (1,2)
         JOIN TransferStates ON TransferStates.TransferStateID = Transfers.TransferStateID
         JOIN TransferTypes ON TransferTypes.TransferTypeID = transfers.TransferTypeID
@@ -63,6 +66,6 @@ WITH EnduserOrders AS(
         LEFT JOIN risk.decisionlog ON risk.decisionlog.OrderID = Orders.OrderID
         LEFT JOIN ExceededExposureLimits ON ExceededExposureLimits.OrderID = Orders.OrderID
        WHERE Orders.OrderID IN (SELECT OrderID FROM EnduserOrders)
-       GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
-       ORDER BY 5 ASC
+       GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+       ORDER BY 7 DESC
 ;
