@@ -24,16 +24,7 @@ WITH Queued_Withdrawals AS (
       JOIN BankWithdrawalTypes ON (BankWithdrawalTypes.BankWithdrawalTypeID = BankWithdrawals.BankWithdrawalTypeID)
       JOIN Users ON (Users.UserID = BankWithdrawals.UserID)
       JOIN UserCategories ON (UserCategories.UserCategoryID = Users.UserCategoryID)
-     WHERE View_Bank_Withdrawals_In_Queue.Enabled IS TRUE
-       AND View_Bank_Withdrawals_In_Queue.EcoSysAccount = :'ecosysaccount'
-       --AND BankWithdrawalTypes.bankwithdrawaltype IN ('EXPRESS')
-       --AND View_Bank_Withdrawals_In_Queue.clearinghouse = 'FINLAND'
-       --AND View_Bank_Withdrawals_In_Queue.bank != 'BSAB'
-       --AND (now() - View_Bank_Withdrawals_In_Queue.datestamp) <= '4 hours'::interval --DELAY
-       --AND View_Bank_Withdrawals_In_Queue.ToAccountNumber ILIKE 'IT%'
-       --AND Users.Username NOT IN ('ninja_estonia','mandalorian')
-       --AND UserCategories.Name = 'Gaming'
-       --AND View_Bank_Withdrawals_In_Queue.bank IN ('BASK','CCRI','UCJA','CAGL','BKBK','BBVA','BSCH','CAIX')
+     WHERE View_Bank_Withdrawals_In_Queue.EcoSysAccount = :'ecosysaccount'
      ORDER BY View_Bank_Withdrawals_In_Queue.EcoSysAccount, View_Bank_Withdrawals_In_Queue.Prio
    ), Queued_Withdrawals_SBA_Candidates AS (
      SELECT ROW_NUMBER() OVER (
