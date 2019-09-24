@@ -4,6 +4,11 @@
 
 \pset expanded off
 
+\echo '\n'
+\echo '***NOTE***'
+\echo 'Check whether Merchant Balance at time fo Settlement covers the Settlement Amount WITH Fee!'
+\echo '\n'
+
 WITH PARAMETERS(processingaccount) AS(
  VALUES(:'processingaccount')
  ),
@@ -30,12 +35,13 @@ WITH PARAMETERS(processingaccount) AS(
      JOIN BankWithdrawals ON (BankWithdrawals.BankWithdrawalID=vSettlements.BankWithdrawalID)
    ),
    BUFFER AS(
-     SELECT Users.Username as username, (Autosettle.Get_Effective_Float(Users.Username, settlementaccounts.Currency)).*, FloatAdjustment.Amount AS LastAdjustmentAmount, FloatAdjustment.RecordDate As AdjustementDate
+     SELECT Users.Username as username, (Autosettle.Get_Effective_Float(Users.Username, settlementaccounts.Currency)).*--, FloatAdjustment.Amount AS LastAdjustmentAmount, FloatAdjustment.RecordDate As AdjustementDate
        FROM Autosettle.settlementaccounts
        JOIN users ON users.userid = settlementaccounts.userid
-       LEFT JOIN (SELECT UserID, Currency, amount, recorddate::timestamp(0)
+       /*LEFT JOIN (SELECT UserID, Currency, amount, recorddate::timestamp(0)
                     FROM Autosettle.FloatAdjustments
-                   WHERE UserID = GET_USERID((SELECT processingaccount FROM PARAMETERS)) AND ordertype = 'FloatAdjustment' ORDER BY RecordDate DESC LIMIT 1) AS FloatAdjustment ON FloatAdjustment.UserID = SettlementAccounts.UserID AND FloatAdjustment.Currency = SettlementAccounts.Currency
+                   WHERE UserID = GET_USERID((SELECT processingaccount FROM PARAMETERS)) AND ordertype = 'FloatAdjustment' ORDER BY RecordDate DESC LIMIT 1
+                 ) AS FloatAdjustment ON FloatAdjustment.UserID = SettlementAccounts.UserID AND FloatAdjustment.Currency = SettlementAccounts.Currency*/
       WHERE Users.Username IN (SELECT processingaccount FROM PARAMETERS)
     ),
     BALANCE AS(
@@ -69,67 +75,94 @@ WITH PARAMETERS(processingaccount) AS(
         WHERE Autosettle.Log.Datestamp = LogQuery.Datestamp
           AND Autosettle.Log.UserID = GET_USERID((SELECT processingaccount FROM PARAMETERS))
         ),
-        RETURNED AS(
-          SELECT Users.UserID, Users.Username, Settlements.BankWithdrawalID, BankWithdrawals.MessageID, BankWithdrawals.Datestamp::timestamp(0), BankWithdrawals.TimestampExecuted::timestamp(0), BankWithdrawalStates.BankWithdrawalState,
-                 Settlements.SettlementCurrency, Settlements.SettlementAmount,
-                 FloatAdjustments.ReturnedBankWithdrawalID,
-                 FloatAdjustments.AdjustedBy,
-                 FloatAdjustments.RecordDate::timestamp(0),
-                 sum(Settlements.SettlementAmount) OVER ()
+        BankWithdrawalInfo AS(
+          SELECT Settlements.SettlementAmount, Settlements.SettlementCurrency, SettlementBatches.UserID, Settlements.BankWIthdrawalID, SettlementBatches.Datestamp, Settlements.BankWithdrawalError || ', ' || Settlements.BankWithdrawalErrorAt::timestamp(0) AS BankWithdrawalerrorAll
             FROM autosettle.Settlements
-            JOIN autosettle.SettlementAccounts ON (SettlementAccounts.SettlementAccountID = Settlements.SettlementAccountID)
-            JOIN Users ON (Users.UserID = SettlementAccounts.UserID)
-            JOIN BankWithdrawals ON (BankWithdrawals.BankWithdrawalID = Settlements.BankWithdrawalID)
-            JOIN BankWithdrawalStates ON (BankWithdrawalStates.BankWithdrawalStateID = BankWithdrawals.BankWithdrawalStateID)
-            LEFT JOIN autosettle.FloatAdjustments ON (FloatAdjustments.ReturnedBankWithdrawalID = Settlements.BankWithdrawalID)
-           WHERE BankWithdrawals.BankWithdrawalStateID = ANY('{2,13}'::integer[])
-             AND Users.UserID = GET_USERID((SELECT processingaccount FROM PARAMETERS))
-             AND FloatAdjustments.ReturnedBankWithdrawalID IS NULL
-           ORDER BY BankWithdrawals.Datestamp ASC
-         )
-         SELECT INFORMATION.Username,
-                INFORMATION.Currency as Currency,
-                COALESCE((CASE WHEN INFORMATION.isodowschedule = '{2,4}' THEN 'TUE & THU'
-                               WHEN INFORMATION.isodowschedule = '{1,3}' THEN 'MON & WED'
-                               WHEN INFORMATION.isodowschedule = '{1,4}' THEN 'MON & THU'
-                               WHEN INFORMATION.isodowschedule = '{1,2,3,4,5}' THEN 'MON to FRI'
-                               WHEN INFORMATION.isodowschedule = '{1}' then 'MON'
-                               WHEN INFORMATION.isodowschedule = '{2}' then 'TUE'
-                               WHEN INFORMATION.isodowschedule = '{3}' then 'WED'
-                               WHEN INFORMATION.isodowschedule = '{4}' then 'THU'
-                               WHEN INFORMATION.isodowschedule = '{5}' then 'FRI'
-                               ELSE NULL END), INFORMATION.Schedule) as Schedule,
-                Settlements.Datestamp::timestamp(0) AS LastSettlementDate,
-                Settlements.BankWithdrawalID AS LastBankWithdrawalID,
-                Settlements.SettlementAmount AS LastSettlementAmount,
-                Buffer.Fundings AS Float_Fundings, Buffer.Adjustments AS Float_adjustments, Buffer.ManualSettlements AS Manual_Settlements, Buffer.Total AS Float_Total, Buffer.LastAdjustmentAmount, Buffer.AdjustementDate,
-                (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) as Balance,
-                (CASE WHEN INFORMATION.Schedule = 'daily' AND Settlements.datestamp >=now()-'24 hours'::interval then 'DONE'
-                      WHEN INFORMATION.Schedule = 'monthly' AND Settlements.datestamp >=now()-'31 days'::interval then 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{2,4}' AND Settlements.Executed IN ('TUE','THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,3}' AND Settlements.Executed IN ('MON','WED') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,4}' AND Settlements.Executed IN ('MON','THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,2,3,4,5}' AND Settlements.Executed IN ('MON','TUE','WED','THU','FRI') AND Settlements.datestamp >=now()-'3 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1}' AND Settlements.Executed IN ('MON') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{2}' AND Settlements.Executed IN ('TUE') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{3}' AND Settlements.Executed IN ('WED') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{4}' AND Settlements.Executed IN ('THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{5}' AND Settlements.Executed IN ('FRI') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
-                      WHEN Settlements.SettlementAmount IS NULL AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) THEN 'NO FUNDS'
-                      WHEN Settlements.Datestamp::timestamp(0) < '2018-01-01' THEN 'NO RECENT'
-                      WHEN INFORMATION.Schedule = 'monthly' AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) AND Settlements.Datestamp <= now()-'31 days'::interval THEN 'NO FUNDS'
-                      WHEN INFORMATION.Schedule != 'monthly' AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) AND Settlements.Datestamp <=now()-'24 hours'::interval THEN 'NO FUNDS'
-                      WHEN (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Total)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Fundings)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Adjustments)) THEN 'NO FUNDS'
-                      ELSE 'NO SETTLEMENT' end) as Status,
-                (CASE WHEN Errorlog.Datestamp < Settlements.Datestamp THEN NULL
-                      WHEN Errorlog.Message IS NULL THEN '***Balance probably acquired after latest Auto-Settle Due date/time' ELSE ErrorLog.Message END) as Error_Message_Log,
-                (CASE WHEN Returned.BankWithdrawalID IS NOT NULL THEN 'TRUE' ELSE 'FALSE' END) as ReturnedWithdrawal
-           FROM INFORMATION
-           LEFT JOIN Settlements ON (Settlements.Username=INFORMATION.Username) AND (Settlements.Currency=INFORMATION.Currency)
-           LEFT JOIN Balance ON (Balance.Username=INFORMATION.Username) AND (Balance.Currency=INFORMATION.Currency)
-           LEFT JOIN Buffer ON (Buffer.Username=INFORMATION.Username) AND (Buffer.Currency=INFORMATION.Currency)
-           LEFT JOIN ErrorLog ON (ErrorLog.UserID = INFORMATION.UserID) AND (ErrorLog.Currency = INFORMATION.Currency)
-           LEFT JOIN Returned ON (Returned.UserID = INFORMATION.UserID) AND (Returned.SettlementCurrency = INFORMATION.Currency)
-           JOIN Users ON (Users.UserID = INFORMATION.UserID)
-          GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+            JOIN autosettle.SettlementBatches ON (SettlementBatches.SettlementBatchID = Settlements.SettlementBatchID)
+            LEFT JOIN LATERAL(
+              SELECT Settlements.SettlementCurrency AS Currency, MAX(datestamp) AS Datestamp
+                FROM autosettle.Settlements
+                JOIN autosettle.SettlementBatches ON (SettlementBatches.SettlementBatchID = Settlements.SettlementBatchID)
+               WHERE SettlementBatches.UserID = GET_USERID('worldremit')
+               GROUP BY 1
+             ) AS LastWithdrawals ON LastWithdrawals.Currency = Settlements.SettlementCurrency
+           WHERE SettlementBatches.UserID = GET_USERID('worldremit')
+             AND SettlementBatches.Datestamp = LastWithdrawals.Datestamp
+           ),
+           FEEs AS(
+             SELECT userid,
+                    REPLACE(SUBSTRING(SUBSTRING(debitfunctionparams::text, '=(.*)'), '=(.*)/'),'"','') AS Currency,
+                    REPLACE(SUBSTRING(debitfunctionparams::text, '=(.*) '),'"','') AS FeeAmount,
+                    REPLACE(SUBSTRING(SUBSTRING(debitfunctionparams::text, '=(.*)'), '=(.*)/'),'"','') || ' ' ||  REPLACE(SUBSTRING(debitfunctionparams::text, '=(.*) '),'"','') AS Fee_Currency
+               FROM DebitModels
+              WHERE UserID = GET_USERID('worldremit')
+                AND paymenttypeid = 5 --SETTLEMENT
+              ORDER BY Datestamp DESC LIMIT 1
+            ),
+            RETURNED AS(
+              SELECT Users.UserID, Users.Username, Settlements.BankWithdrawalID, BankWithdrawals.MessageID, BankWithdrawals.Datestamp::timestamp(0), BankWithdrawals.TimestampExecuted::timestamp(0), BankWithdrawalStates.BankWithdrawalState,
+                     Settlements.SettlementCurrency, Settlements.SettlementAmount,
+                     FloatAdjustments.ReturnedBankWithdrawalID,
+                     FloatAdjustments.AdjustedBy,
+                     FloatAdjustments.RecordDate::timestamp(0),
+                     sum(Settlements.SettlementAmount) OVER ()
+                FROM autosettle.Settlements
+                JOIN autosettle.SettlementAccounts ON (SettlementAccounts.SettlementAccountID = Settlements.SettlementAccountID)
+                JOIN Users ON (Users.UserID = SettlementAccounts.UserID)
+                JOIN BankWithdrawals ON (BankWithdrawals.BankWithdrawalID = Settlements.BankWithdrawalID)
+                JOIN BankWithdrawalStates ON (BankWithdrawalStates.BankWithdrawalStateID = BankWithdrawals.BankWithdrawalStateID)
+                LEFT JOIN autosettle.FloatAdjustments ON (FloatAdjustments.ReturnedBankWithdrawalID = Settlements.BankWithdrawalID)
+               WHERE BankWithdrawals.BankWithdrawalStateID = ANY('{2,13}'::integer[])
+                 AND Users.UserID = GET_USERID((SELECT processingaccount FROM PARAMETERS))
+                 AND FloatAdjustments.ReturnedBankWithdrawalID IS NULL
+               ORDER BY BankWithdrawals.Datestamp ASC
+             )
+             SELECT INFORMATION.Username,
+                    INFORMATION.Currency as Currency,
+                    COALESCE((CASE WHEN INFORMATION.isodowschedule = '{2,4}' THEN 'TUE & THU'
+                                   WHEN INFORMATION.isodowschedule = '{1,3}' THEN 'MON & WED'
+                                   WHEN INFORMATION.isodowschedule = '{1,4}' THEN 'MON & THU'
+                                   WHEN INFORMATION.isodowschedule = '{1,2,3,4,5}' THEN 'MON to FRI'
+                                   WHEN INFORMATION.isodowschedule = '{1}' then 'MON'
+                                   WHEN INFORMATION.isodowschedule = '{2}' then 'TUE'
+                                   WHEN INFORMATION.isodowschedule = '{3}' then 'WED'
+                                   WHEN INFORMATION.isodowschedule = '{4}' then 'THU'
+                                   WHEN INFORMATION.isodowschedule = '{5}' then 'FRI'
+                                   ELSE NULL END), INFORMATION.Schedule) as Schedule,
+                    COALESCE(Settlements.Datestamp::timestamp(0), BankWithdrawalInfo.Datestamp) AS "LastSettlementDate/Attempt",
+                    COALESCE(Settlements.BankWithdrawalID, BankWithdrawalInfo.BankWithdrawalID) AS BankWithdrawalID,
+                    COALESCE(BankWithdrawalInfo.SettlementAmount, Settlements.SettlementAmount) AS SettlementAmount,
+                    Fees.Fee_currency AS FeeAmount,
+                    Buffer.Fundings AS Float_Fundings, Buffer.Adjustments AS Float_adjustments, Buffer.ManualSettlements AS Manual_Settlements, Buffer.Total AS Float_Total, --Buffer.LastAdjustmentAmount, Buffer.AdjustementDate::date,
+                    (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) as Balance,
+                    (CASE WHEN INFORMATION.Schedule = 'daily' AND Settlements.datestamp >=now()-'24 hours'::interval then 'DONE'
+                          WHEN INFORMATION.Schedule = 'monthly' AND Settlements.datestamp >=now()-'31 days'::interval then 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{2,4}' AND Settlements.Executed IN ('TUE','THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,3}' AND Settlements.Executed IN ('MON','WED') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,4}' AND Settlements.Executed IN ('MON','THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1,2,3,4,5}' AND Settlements.Executed IN ('MON','TUE','WED','THU','FRI') AND Settlements.datestamp >=now()-'3 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{1}' AND Settlements.Executed IN ('MON') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{2}' AND Settlements.Executed IN ('TUE') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{3}' AND Settlements.Executed IN ('WED') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{4}' AND Settlements.Executed IN ('THU') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN INFORMATION.Schedule = 'isodow' AND INFORMATION.isodowschedule = '{5}' AND Settlements.Executed IN ('FRI') AND Settlements.datestamp >=now()-'7 days'::interval THEN 'DONE'
+                          WHEN Settlements.SettlementAmount IS NULL AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) THEN 'NO FUNDS'
+                          WHEN Settlements.Datestamp::timestamp(0) < '2018-01-01' THEN 'NO RECENT'
+                          WHEN INFORMATION.Schedule = 'monthly' AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) AND Settlements.Datestamp <= now()-'31 days'::interval THEN 'NO FUNDS'
+                          WHEN INFORMATION.Schedule != 'monthly' AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) AND Settlements.Datestamp <=now()-'24 hours'::interval THEN 'NO FUNDS'
+                          WHEN (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Total)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Fundings)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Adjustments)) THEN 'NO FUNDS'
+                          ELSE 'NO SETTLEMENT' end) as Status,
+                    COALESCE(BankWithdrawalInfo.BankWithdrawalerrorall, (CASE WHEN Errorlog.Datestamp < Settlements.Datestamp THEN NULL
+                                                                               WHEN Errorlog.Message IS NULL THEN '***Balance probably acquired after latest Auto-Settle Due date/time' ELSE ErrorLog.Message END)) as Error_Message_Log,
+                    (CASE WHEN Returned.BankWithdrawalID IS NOT NULL THEN 'TRUE' ELSE 'FALSE' END) as ReturnedWithdrawal
+               FROM INFORMATION
+               LEFT JOIN Settlements ON (Settlements.Username=INFORMATION.Username) AND (Settlements.Currency=INFORMATION.Currency)
+               LEFT JOIN Balance ON (Balance.Username=INFORMATION.Username) AND (Balance.Currency=INFORMATION.Currency)
+               LEFT JOIN Buffer ON (Buffer.Username=INFORMATION.Username) AND (Buffer.Currency=INFORMATION.Currency)
+               LEFT JOIN ErrorLog ON (ErrorLog.UserID = INFORMATION.UserID) AND (ErrorLog.Currency = INFORMATION.Currency)
+               LEFT JOIN BankWithdrawalInfo ON (BankWithdrawalInfo.UserID = INFORMATION.UserID) AND (BankWithdrawalInfo.SettlementCurrency = INFORMATION.Currency)
+               LEFT JOIN Returned ON (Returned.UserID = INFORMATION.UserID) AND (Returned.SettlementCurrency = INFORMATION.Currency)
+               LEFT JOIN Fees ON (Fees.UserID = INFORMATION.UserID)
+               JOIN Users ON (Users.UserID = INFORMATION.UserID)
+              GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 ;
