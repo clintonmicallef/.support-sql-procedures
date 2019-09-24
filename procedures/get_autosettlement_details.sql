@@ -6,7 +6,7 @@
 
 \echo '\n'
 \echo '***NOTE***'
-\echo 'Check whether Merchant Balance at time fo Settlement covers the Settlement Amount WITH Fee!'
+\echo 'Check whether merchant\'s balance at the time of the Settlement covers the Settlement Amount WITH Fee!'
 \echo '\n'
 
 WITH PARAMETERS(processingaccount) AS(
