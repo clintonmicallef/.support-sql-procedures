@@ -60,7 +60,7 @@ WITH PARAMETERS(processingaccount) AS(
        ORDER BY FlagValueAccountingTransactions.RecordDate ASC*/
      ),
      ERRORLOG AS(
-       SELECT Autosettle.Log.UserID, Autosettle.Log.Currency, Autosettle.Log.Datestamp, replace(Autosettle.Log.Message,'transactions of ','') || ' ' || '('||Autosettle.Log.Datestamp::date||')' as message
+       SELECT Autosettle.Log.UserID, Autosettle.Log.Currency, Autosettle.Log.Datestamp, replace(Autosettle.Log.Message,'transactions of ','') || ' ' || '('||Autosettle.Log.Datestamp::timestamp(0)||')' as message
          FROM (SELECT UserID, Currency, MAX(Datestamp) AS Datestamp
                  FROM Autosettle.Log
                 GROUP BY 1,2
