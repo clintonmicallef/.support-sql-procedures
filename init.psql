@@ -41,3 +41,6 @@
 \echo 'Support-SQL-Procedures Help: Type ':color_green':help':color_reset 'to list & search aliases'
 \echo 'Support-SQL-Procedures Definitions: Type ':color_green':definition':color_reset 'to view aliases {query} definitions'
 \echo 'Support-SQL-Procedures Update: Type ':color_green':git_update':color_reset 'to update your environment'
+
+--echoes Time at each Login
+SELECT now() AS Login_Time;
