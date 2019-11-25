@@ -27,7 +27,7 @@ SELECT Candidates.*
        Candidates.MaxAmount AND
        Candidates.Whitelist AND
        Candidates.NotAvoidRoute
- ORDER BY Candidates.PreferredWithdrawalRoute DESC,
+ ORDER BY Candidates.banknumberpreferredroute DESC,
           Candidates.SendingBankAccount DESC NULLS LAST,
           Candidates.ClearingHouseBankAccount DESC NULLS LAST,
           Candidates.BankGroup DESC NULLS LAST,
