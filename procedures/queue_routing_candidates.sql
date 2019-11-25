@@ -30,7 +30,7 @@ WITH Queued_Withdrawals AS (
      SELECT ROW_NUMBER() OVER (
             PARTITION BY Candidates.BankWithdrawalID
                 ORDER BY -- This should be identical with View_Sending_Bank_Account_Candidates()
-            Candidates.PreferredWithdrawalRoute DESC,
+            Candidates.banknumberpreferredroute DESC,
             Candidates.SendingBankAccount DESC NULLS LAST,
             Candidates.ClearingHouseBankAccount DESC NULLS LAST,
             Candidates.BankGroup DESC NULLS LAST,
