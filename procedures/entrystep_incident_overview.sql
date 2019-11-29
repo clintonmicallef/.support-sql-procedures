@@ -14,7 +14,9 @@ WITH Deposit_Monitor AS(
          count(case when orders.orderstatusid = 102 then 1 else null end) as aborted,
          count(case when orders.orderstatusid = 103 then 1 else null end) as crashed,
          count(case when orders.orderstatusid = 104 then 1 else null end) as limit,
-         COUNT(DISTINCT ROW(orders.UserID::text, orders.EndUserID)) AS Eusers
+         COUNT(DISTINCT ROW(orders.UserID::text, orders.EndUserID)) AS TotalEusers,
+         COUNT(DISTINCT ROW(orders.UserID::text, orders.EndUserID)) FILTER(WHERE Orders.OrderStatusID = 100) AS EusersDONE,
+         COUNT(DISTINCT ROW(orders.UserID::text, orders.EndUserID)) FILTER(WHERE Orders.OrderStatusID != 100) AS "eusers!done"
          --,(array_agg(DISTINCT ordersteptypes.name)) as lastorderstep
     FROM orders
     JOIN Ordersteps ON Ordersteps.OrderID = Orders.OrderID AND Ordersteps.NextOrderStepID IS NULL
@@ -38,7 +40,9 @@ WITH Deposit_Monitor AS(
         --crashed,
         round((100*m.limit/m.total),2) as "%limit",
         --m.limit,
-        m.Eusers
+        m.totalEusers,
+        m.EusersDONE,
+        m."eusers!done"
         --SUM(m.total) over() as total_orders,
         --SUM(Eusers) over() as total_eusers
         --,lastorderstep
