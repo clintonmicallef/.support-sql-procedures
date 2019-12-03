@@ -147,7 +147,7 @@ WITH PARAMETERS(processingaccount) AS(
                      Fees.Fee_currency AS FeeAmount,
                      Settlements.BankWithdrawalID,
                      COALESCE((Settlements.TimestampExecuted::timestamp(0))::text, Settlements.BankWithdrawalError) AS "Executed/Error",
-                     COALESCE((NextAutosettlementAmount.Total), (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) AS NextSettlementAmount,
+                     COALESCE((CASE WHEN NextAutosettlementAmount.Total < 0 THEN NULL ELSE NextAutosettlementAmount.Total END), (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) AS NextSettlementAmount,
                      /*Buffer.ManualSettlements AS Manual_Settlements,*/ Buffer.AdjustementDate::timestamp(0), Buffer.LastAdjustmentAmount, Buffer.Total AS FloatTotal, --Buffer.LastAdjustmentAmount, Buffer.AdjustementDate::date,
                      (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) AS Balance,
                      (CASE WHEN INFORMATION.Schedule = 'daily' AND Settlements.datestamp >=now()-'24 hours'::interval then 'DONE'
@@ -167,7 +167,7 @@ WITH PARAMETERS(processingaccount) AS(
                            WHEN INFORMATION.Schedule != 'monthly' AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) IN (0.00,0) AND Settlements.Datestamp <=now()-'24 hours'::interval THEN 'NO FUNDS'
                            WHEN (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Total)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Fundings)) OR (FLOOR((CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) <= FLOOR(Buffer.Adjustments)) THEN 'NO FUNDS'
                            ELSE 'NO SETTLEMENT' end) AS Status,
-                     (CASE WHEN (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) >= 0 AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) <= Buffer.Total
+                     (CASE WHEN (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) > 0 AND (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) <= Buffer.Total
                            THEN 'Balance less than Float amount, will only settle amount above float'
                            WHEN (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) > 0
                                 AND
