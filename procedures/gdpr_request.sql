@@ -8,7 +8,7 @@
 
 WITH Data AS (
   SELECT DISTINCT
-  /*1*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.Name), lower(E.Name), lower(KYC.Entities.Name), lower(TransferBankAccounts.Name), lower(TransferBankAccounts.kycdata::json->>'name'), CONCAT(lower(OrderAttributes.FirstName),' ',lower(OrderAttributes.LastName)), CONCAT(lower(KYC.PNPOrders.kycdata::json->>'firstname'),' ',lower(KYC.PNPOrders.kycdata::json->>'lastname')), CONCAT(lower(KYC.EndUserEntities.firstname),' ',lower(KYC.EndUserEntities.LastName)) ))) AS Name,
+  /*1*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.Name), lower(E.Name), lower(KYC.Entities.Name), lower(TransferBankAccounts.Name), lower(TransferBankAccounts.kycdata::json->>'name'), CONCAT(lower(OrderAttributes.FirstName),' ',lower(OrderAttributes.LastName)), CONCAT(lower(KYC.PNPOrders.kycdata::json->>'firstname'),' ',lower(KYC.PNPOrders.kycdata::json->>'lastname')) ))) AS Name,
   /*2*/  (ARRAY_AGG(DISTINCT COALESCE(OrdersKYCData.dob, KYC.Entities.dob, (KYC.PnPOrders.kycdata::json->>'dob')::date, TransferBankAccounts.dob, OrderAttributes.dob))) AS DateOfBirth,
   /*3*/  (ARRAY_AGG(DISTINCT COALESCE(OrdersKYCData.gender, KYC.Entities.gender, TransferBankAccounts.gender))) AS Gender,
   /*4*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.address), lower(kyc.entities.fulladdress::json->>'address'), lower(E.address), lower(TransferBankAccounts.address), lower(OrderAttributes.address)))) AS Address,
@@ -19,6 +19,7 @@ WITH Data AS (
   /*9*/  (ARRAY_AGG(DISTINCT COALESCE(TransferBankAccounts.AccountNumber, OrderAttributes.AccountNumber, (kyc.PnpOrders.kycdata::json->'accounts')::text))) AS BankAccounts,
   /*10*/ (ARRAY_AGG(DISTINCT COALESCE(replace(replace(replace(KYC.Entities.phonenumber, '+', ''), ' ', ''), '-',''), replace(replace(replace(OrderAttributes.mobilephone, '+',''), ' ', ''), '-','')))) AS PhoneNumbers,
   /*11*/ (ARRAY_AGG(DISTINCT COALESCE(lower(E.Email), lower(OrderAttributes.Email), lower(kyc.entities.email)))) AS Email
+  /*12*/-- (ARRAY_AGG(DISTINCT COALESCE(lower(E.Email), lower(OrderAttributes.Email), lower(kyc.entities.email)))) AS IsRegisteredBlocked
     FROM Orders
     LEFT JOIN Entities E ON (E.EntityID = Orders.EntityID)
     LEFT JOIN BankOrders ON (BankOrders.OrderID = Orders.OrderID)
@@ -39,7 +40,6 @@ WITH Data AS (
     LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-    LEFT JOIN kyc.EndUserEntities ON (kyc.EndUserEntities.KYCEntityID = kyc.Entities.KYCEntityID)
    WHERE Orders.OrderID = :'orderID' --> CHANGE ORDERID
  )
  SELECT DISTINCT
@@ -56,3 +56,56 @@ WITH Data AS (
         replace(replace(replace(replace(DATA.email::text,'{',''),'}',''),'"',''),',NULL','') AS emailaddress
    FROM DATA
 ;
+
+/* Revamp notes:
+TransferBankAccounts
+accountnumber, iban, balance, personids, personid, name, address, zipcode, city, dob, gender, coutry
+
+Entities
+email, personnid, name, address, zipcode, city, country, extendedmobilebankid
+
+OrderAttributes
+firstname, lastname, country, accountnumber, email, NationalIdentificationNumber, address, dob, ip, mobilephone
+
+OrdersKYCData
+name, dob, personid, gender, address, zipcode, city, coutry, email
+
+autogiro.outgoingmandaterecords
+accountnnumber, personid
+
+autogiro.mandateadvicerecords
+bankaccountnumber, personid,
+
+autogiro.payers
+accountnumber, personId
+
+
+enduserclientplatforms
+os, osversio, browser, browserversion, hardware
+
+browseruseragents
+value,
+
+orderfingerprints
+
+sessions
+enduserhost (IP)
+
+blockedpersons
+personid, reason
+
+bankorders
+personid, balance
+
+kyc.pnporders
+kycdata {dob, accounts, fullaccountnumber, balance, firstname, lastname}, personid, dob
+
+kyc.entities
+personid, firstname, lastname, name, dob, fulladdress, email, phonenumber, geder
+
+kyc.bankentities
+name
+
+
+kyc.endusers
+firstname, lastname, name, email
