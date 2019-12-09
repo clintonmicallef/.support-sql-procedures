@@ -34,7 +34,7 @@ SELECT DistinctEntryStepIdentifiers.Username,
                      END) AS IsInstant,
               EntrySteps.Priority,
               (CASE WHEN UserSettings.RequireFetchAccountFromBank IS TRUE AND Entrysteps.Name IN ('Other bank', 'IBAN/SEPA') THEN 'f'
-                    WHEN UserSettings.RequireFetchAccountFromBank IS TRUE AND (SELECT 1 FROM Get_Account_Selector(Entrysteps.EntrystepID, Users.UserID)) IS NULL THEN 'f' ELSE COALESCE(UserEntrySteps.Allow::boolean, UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL)
+                    WHEN UserSettings.RequireFetchAccountFromBank IS TRUE AND NOT EXISTS (SELECT 1 FROM Get_Account_Selector(Entrysteps.EntrystepID, Users.UserID)) THEN 'f' ELSE COALESCE(UserEntrySteps.Allow::boolean, UserEntryStepCountries.UserEntryStepCountryID IS NOT NULL)
                      END) AS Allow,
               Users.Username
          FROM Users
