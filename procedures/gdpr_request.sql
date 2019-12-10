@@ -47,12 +47,10 @@ WITH Data AS (
     LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-   WHERE Orders.OrderID = :'orderID'
-
-      /*   (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
+   WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
                       WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccounts.TransferBankAccountID = :'transferbankaccount'
                       WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
-                      ELSE NULL END))*/
+                      WHEN (NULLIF(:'orderID',''))::bigint IS NOT NULL THEN Orders.OrderID = (:'orderID')::bigint ELSE NULL END)
  )
  SELECT DISTINCT
         INITCAP(replace(replace(replace(replace(DATA.name::text,'{',''),'}',''),'"',''),',NULL','')) AS name,
