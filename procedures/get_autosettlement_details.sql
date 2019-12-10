@@ -13,7 +13,7 @@ WITH PARAMETERS(processingaccount) AS(
  VALUES(:'processingaccount')
  ),
  INFORMATION AS(
-   SELECT Users.Username, SettlementAccounts.UserID, Currency, schedule, isodowschedule, dayofmonthschedule
+   SELECT Users.Username, SettlementAccounts.UserID, Currency, schedule, isodowschedule, dayofmonthschedule, lastsettlementattempt
      FROM Autosettle.SettlementAccounts
      JOIN Users ON Users.UserID = SettlementAccounts.userID
     WHERE Username IN (SELECT processingaccount FROM PARAMETERS)
@@ -142,13 +142,14 @@ WITH PARAMETERS(processingaccount) AS(
                                     ELSE NULL END), INFORMATION.Schedule) AS Schedule,
                      Settlements.StartTimestamp::timestamp(0),
                      Settlements.EndTimeStamp::timestamp(0),
+                     Information.lastsettlementattempt,
                      Settlements.SettlementDate AS LastSettlementDate,
                      Settlements.SettlementAmount,
                      Fees.Fee_currency AS FeeAmount,
                      Settlements.BankWithdrawalID,
                      COALESCE((Settlements.TimestampExecuted::timestamp(0))::text, Settlements.BankWithdrawalError) AS "Executed/Error",
                      COALESCE((CASE WHEN NextAutosettlementAmount.Total < 0 THEN NULL ELSE NextAutosettlementAmount.Total END), (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END)) AS NextSettlementAmount,
-                     /*Buffer.ManualSettlements AS Manual_Settlements,*/ Buffer.AdjustementDate::timestamp(0), Buffer.LastAdjustmentAmount, Buffer.Total AS FloatTotal, --Buffer.LastAdjustmentAmount, Buffer.AdjustementDate::date,
+                     /*Buffer.ManualSettlements AS Manual_Settlements,*/ Buffer.AdjustementDate::timestamp(0), Buffer.LastAdjustmentAmount AS LastAdjustment, Buffer.Total AS FloatTotal, --Buffer.LastAdjustmentAmount, Buffer.AdjustementDate::date,
                      (CASE WHEN Balance.Balance IS NULL THEN 0.00::int ELSE Balance.Balance END) AS Balance,
                      (CASE WHEN INFORMATION.Schedule = 'daily' AND Settlements.datestamp >=now()-'24 hours'::interval then 'DONE'
                            WHEN INFORMATION.Schedule = 'monthly' AND Settlements.datestamp >=now()-'31 days'::interval then 'DONE'
