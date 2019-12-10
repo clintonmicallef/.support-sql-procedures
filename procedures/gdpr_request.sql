@@ -2,10 +2,10 @@
    Gets PersonID of an end user
    Not to author: Query needs updating when new KYC model is launched with KYC schema */
 
+\prompt 'Please enter an OrderID', orderID
 \prompt 'Please enter a PersonID or press enter to continue', person
 \prompt 'Please enter an TransferBankAccountID or press enter to continue', transferbankaccount
 \prompt 'Please enter an the AccountNumber or press enter to continue', bankaccountnumber
-\prompt 'Please enter an OrderID', orderID
 
 \pset expanded on
 
@@ -47,11 +47,12 @@ WITH Data AS (
     LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-   WHERE (Orders.OrderID = :'orderID' OR
-         (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
+   WHERE (SELECT CASE WHEN (NULLIF(:'orderID','')) IS NOT NULL THEN Orders.OrderID = :'orderID')
+
+      /*   (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
                       WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccounts.TransferBankAccountID = :'transferbankaccount'
                       WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
-                      ELSE NULL END))
+                      ELSE NULL END))*/
  )
  SELECT DISTINCT
         INITCAP(replace(replace(replace(replace(DATA.name::text,'{',''),'}',''),'"',''),',NULL','')) AS name,
