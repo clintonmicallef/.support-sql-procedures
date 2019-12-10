@@ -47,8 +47,8 @@ WITH Data AS (
     LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-   WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(Transferbankaccounts.personIDs)
-                      WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccoutns.TransferBankAccoutnnID = :'transferbankaccount'
+   WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
+                      WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccounts.TransferBankAccountID = :'transferbankaccount'
                       WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
                       ELSE Orders.OrderID = :'orderID'  END)
  )
