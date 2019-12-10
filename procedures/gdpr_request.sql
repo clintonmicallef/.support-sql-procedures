@@ -2,6 +2,9 @@
    Gets PersonID of an end user
    Not to author: Query needs updating when new KYC model is launched with KYC schema */
 
+\prompt 'Please enter a PersonID or press enter to continue', person
+\prompt 'Please enter an TransferBankAccountID or press enter to continue', transferbankaccount
+\prompt 'Please enter an the AccountNumber or press enter to continue', bankaccountnumber
 \prompt 'Please enter an OrderID', orderID
 
 \pset expanded on
@@ -28,11 +31,15 @@ WITH Data AS (
     LEFT JOIN LATERAL(
       SELECT DISTINCT OrderID
         FROM BankOrders
-       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() -'6 months'::interval
+       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() - interval '24 months'
        UNION
       SELECT DISTINCT orderID
         FROM orderbankaccounts
-       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() -'6 months'::interval
+       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() - interval '24 months'
+       UNION
+      SELECT DISTINCT orderID
+        FROM BankOrderTransfers
+       WHERE (ToTransferBankAccountID = TransferBankAccounts.TransferBankAccountID OR FromTransferBankAccountID = TransferBankAccounts.TransferBankAccountID) AND Datestamp >= now() - interval '24 months'
      ) AS OrdersCollection ON TRUE
     LEFT JOIN OrderAttributes ON (OrderAttributes.OrderID = (COALESCE(OrdersCollection.OrderID, Orders.OrderID))) AND (Orderattributes.FirstName IS NOT NULL) AND (OrderAttributes.LastName IS NOT NULL)
     LEFT JOIN Countries ON (Countries.code = OrderAttributes.Country)
@@ -40,7 +47,10 @@ WITH Data AS (
     LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
     LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-   WHERE Orders.OrderID = :'orderID' --> CHANGE ORDERID
+   WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(Transferbankaccounts.personIDs)
+                      WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccoutns.TransferBankAccoutnnID = :'transferbankaccount'
+                      WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
+                      ELSE Orders.OrderID = :'orderID'  END)
  )
  SELECT DISTINCT
         INITCAP(replace(replace(replace(replace(DATA.name::text,'{',''),'}',''),'"',''),',NULL','')) AS name,
@@ -56,6 +66,9 @@ WITH Data AS (
         replace(replace(replace(replace(DATA.email::text,'{',''),'}',''),'"',''),',NULL','') AS emailaddress
    FROM DATA
 ;
+
+--OR ENTER PERSONID
+--OR ENTER BANKACCOUNTN NNUMBER
 
 /* Revamp notes:
 TransferBankAccounts
