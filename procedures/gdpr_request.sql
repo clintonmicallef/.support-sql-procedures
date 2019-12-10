@@ -50,7 +50,7 @@ WITH Data AS (
    WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
                       WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccounts.TransferBankAccountID = :'transferbankaccount'
                       WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
-                      ELSE Orders.OrderID = :'orderID'  END)
+                      WHEN NULLIF(:'orderID','') IS NOT NULL THEN Orders.OrderID = :'orderID'  ELSE TRUE END)
  )
  SELECT DISTINCT
         INITCAP(replace(replace(replace(replace(DATA.name::text,'{',''),'}',''),'"',''),',NULL','')) AS name,
