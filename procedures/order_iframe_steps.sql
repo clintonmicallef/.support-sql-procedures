@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an OrderID', orderid
 
+\set QUIET ON
+
 \pset expanded on
 
 SELECT OrderSteps.OrderID,
@@ -16,3 +18,9 @@ SELECT OrderSteps.OrderID,
   JOIN OrderStepTypes ON (OrderStepTypes.OrderStepTypeID = OrderSteps.OrderStepTypeID)
  WHERE OrderSteps.OrderID = :'orderid'
 ;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'order_iframe_steps.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

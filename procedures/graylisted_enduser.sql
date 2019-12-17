@@ -2,6 +2,8 @@
 
 \prompt 'Please enter a PersonID', personid
 
+\set QUIET ON
+
 \pset expanded off
 
 SELECT transfers.transferid,
@@ -38,3 +40,9 @@ SELECT transfers.transferid,
  WHERE transfers.transfertypeid = 1 AND transfers.transferstateid = 8
    AND eventnamechainbalances.personid = ANY(Get_Related_PersonIDs(:'personid'))
  ORDER BY transfers.datestamp DESC;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'graylisted_enduser.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

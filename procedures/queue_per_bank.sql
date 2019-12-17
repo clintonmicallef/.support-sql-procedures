@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 SELECT ROW_NUMBER() OVER(ORDER BY b.Attempts, t.Priority DESC, b.Datestamp),
@@ -17,3 +19,9 @@ SELECT ROW_NUMBER() OVER(ORDER BY b.Attempts, t.Priority DESC, b.Datestamp),
    AND BankWithdrawalState = 'QUEUED'
    AND v.Datestamp >=now()-'7 days'::interval
  ORDER BY v.BankWithdrawalType, v.Datestamp DESC, b.Attempts, t.Priority DESC;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'queue_per_bank.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

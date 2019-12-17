@@ -3,6 +3,8 @@
 \prompt 'Please enter a TransferBankAccountID (one or more)', transferbankaccountID
 \prompt 'Please enter a ProcessingAccount or press enter to continue', processingaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH EnduserOrders AS(
@@ -69,3 +71,8 @@ WITH EnduserOrders AS(
        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
        ORDER BY 7 DESC
 ;
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'all_enduser_activity.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

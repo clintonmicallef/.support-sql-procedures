@@ -2,6 +2,8 @@
 
 \prompt 'Please enter a BankWithdrawalID', bankwithdrawalID
 
+\set QUIET ON
+
 \pset expanded on
 
 SELECT Candidates.*
@@ -35,3 +37,9 @@ SELECT Candidates.*
           Candidates.Priority ASC NULLS LAST,
           Candidates.Balance DESC NULLS LAST
 LIMIT 5;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_withdrawal_routes.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

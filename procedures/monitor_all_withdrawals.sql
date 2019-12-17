@@ -1,5 +1,7 @@
 /* All Payouts Queue */
 
+\set QUIET ON
+
 \pset expanded off
 
 SELECT BankAccounts.BankAccountID,
@@ -83,3 +85,9 @@ SELECT BankAccounts.BankAccountID,
    --  BankWithdrawals.DeQueued = 1
  GROUP BY 1, 2, 3, 4, 5, 6, 7, 10, 11, 13, 14, 15, 16, 19
  ORDER BY BankWithdrawalState DESC, count(*) DESC;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'monitor_all_withdrawals.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

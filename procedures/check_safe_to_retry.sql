@@ -3,6 +3,8 @@
 
 \prompt 'Please enter a BankWithdrawalID', bankwithdrawalID
 
+\set QUIET ON
+
 \pset expanded on
 
 WITH Values AS (
@@ -82,3 +84,9 @@ SELECT *,
           ELSE                                                       format('DEBUG_TRUST_NOT_EXECUTED BankWithdrawalID %s is trusted to not be executed since BankWithdrawalID %s was CONFIRMED after it in time and we have successfully scanned the ledger after it in time, BankLedgerScanID %s', BankWithdrawalID, MoreRecentConfirmedBankWithdrawalID, BankLedgerScanID)
           END AS Debug
 FROM Results;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_safe_to_retry.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

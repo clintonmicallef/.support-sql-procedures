@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an OrderID', orderid
 
+\set QUIET ON
+
 \pset expanded on
 
 SELECT Orders.OrderID, TransferStates.Name AS TransferState,
@@ -20,3 +22,9 @@ SELECT Orders.OrderID, TransferStates.Name AS TransferState,
   LEFT JOIN risk.DecisionLog ON (DecisionLog.OrderID = Orders.OrderID)
  WHERE Orders.OrderID = :'orderid'
 ;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_delayed_credit.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

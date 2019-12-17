@@ -4,6 +4,8 @@
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', timeinput
 \prompt 'Please enter a ProcessingAccount or press enter to continue', processingaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 SELECT min(Orders.Datestamp)::timestamp(0),
@@ -30,3 +32,9 @@ SELECT min(Orders.Datestamp)::timestamp(0),
    --AND OrderStatuses.Name = 'CRASHED'
  GROUP BY 6, 9, 10
  ORDER BY Percentage DESC;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'entrystep_issues.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

@@ -11,6 +11,8 @@
 \prompt 'Please enter a delay (including unit of time example: 30 mins) or enter "0 mins" to select ALL', delay
 \prompt 'Please enter a receiving bank or press enter to continue', tobank
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH RETRY AS(
@@ -30,3 +32,9 @@ WITH RETRY AS(
    ORDER BY View_All_Bank_Withdrawals.bankwithdrawaltype, View_All_Bank_Withdrawals.Datestamp DESC
 )
 SELECT retry_queued_bank_withdrawal(Retry.BankWithdrawalID) FROM Retry;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'set_withdrawal_priority.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

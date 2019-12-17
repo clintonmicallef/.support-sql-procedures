@@ -1,4 +1,4 @@
--- Create temporary table for user access log stats
+-- Create temporary table for user access log data to be exported to Google Drive (since volatile data)
 \cd :local_path_supportsqlprocedures/procedures
 \set QUIET ON
 DROP TABLE IF EXISTS pg_temp.SupportSQL_UserLogExport;

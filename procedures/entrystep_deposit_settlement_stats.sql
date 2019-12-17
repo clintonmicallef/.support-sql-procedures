@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an EntrystepID', entrystepID
 
+\set QUIET ON
+
 \pset expanded off
 
  SELECT EventNameChainBalances.EntryStepID,
@@ -24,3 +26,9 @@
   ORDER BY 1, 2;
 
 \echo 'Values take last 7 days into account'
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'entrystep_deposit_settlement_stats.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
