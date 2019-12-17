@@ -44,5 +44,7 @@
 \echo 'Support-SQL-Procedures Definitions: Type ':color_green':definition':color_reset 'to view queries definitions'
 \echo 'Support-SQL-Procedures Update: Type ':color_green':git_update':color_reset 'to pull updates from the repository'
 
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
+
 --echoes Time at each Login
 SELECT now() AS Login_Time;
