@@ -29,4 +29,4 @@ SELECT BankWithdrawals.SendingBankAccountID,
  GROUP BY 1, 2, 3, 4, 5
  ORDER BY count(*) DESC;
 
-INSERT INTO pg_temp.SupportSQL_UserLog VALUES (user, now(), 'check_queue.sql');
+INSERT INTO SupportSQL_UserLog VALUES (user, now(), 'check_queue.sql');
