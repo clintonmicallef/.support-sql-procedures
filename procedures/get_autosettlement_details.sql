@@ -235,5 +235,6 @@ WITH PARAMETERS(processingaccount) AS(
 ;
 
 
-INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_autosettlement_details.sql');
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_queue.sql');
 \COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
