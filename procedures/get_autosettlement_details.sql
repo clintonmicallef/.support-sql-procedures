@@ -231,3 +231,7 @@ WITH PARAMETERS(processingaccount) AS(
                 LEFT JOIN Fees ON (Fees.UserID = INFORMATION.UserID)
                 JOIN Users ON (Users.UserID = INFORMATION.UserID)
 ;
+
+
+INSERT INTO SupportSQL_UserLog VALUES (user, now(), 'get_autosettlement_details.sql');
+\COPY (SELECT * FROM SupportSQL_UserLog) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV HEADER
