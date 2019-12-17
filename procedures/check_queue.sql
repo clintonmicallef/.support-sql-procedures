@@ -28,3 +28,9 @@ SELECT BankWithdrawals.SendingBankAccountID,
  WHERE View_Bank_Withdrawals_In_Queue.Enabled IS TRUE
  GROUP BY 1, 2, 3, 4, 5
  ORDER BY count(*) DESC;
+
+
+
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_queue.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

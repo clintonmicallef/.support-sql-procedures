@@ -2,6 +2,8 @@
 
 \prompt 'Please enter a Processing Account', processingaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 \echo '\n'
@@ -231,3 +233,8 @@ WITH PARAMETERS(processingaccount) AS(
                 LEFT JOIN Fees ON (Fees.UserID = INFORMATION.UserID)
                 JOIN Users ON (Users.UserID = INFORMATION.UserID)
 ;
+
+
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_queue.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
