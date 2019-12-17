@@ -236,4 +236,4 @@ WITH PARAMETERS(processingaccount) AS(
 
 
 INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_autosettlement_details.sql');
-\COPY (SELECT * FROM SupportSQL_UserLogExpoort) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
