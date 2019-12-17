@@ -30,5 +30,5 @@ SELECT BankWithdrawals.SendingBankAccountID,
  ORDER BY count(*) DESC;
 
 
-INSERT INTO SupportSQL_UserLog VALUES (user, now(), 'check_queue.sql');
-\COPY (SELECT * FROM SupportSQL_UserLog) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV HEADER
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_queue.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV

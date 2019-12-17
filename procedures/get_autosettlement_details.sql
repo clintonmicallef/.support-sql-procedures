@@ -2,6 +2,8 @@
 
 \prompt 'Please enter a Processing Account', processingaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 \echo '\n'
@@ -233,5 +235,5 @@ WITH PARAMETERS(processingaccount) AS(
 ;
 
 
-INSERT INTO SupportSQL_UserLog VALUES (user, now(), 'get_autosettlement_details.sql');
-\COPY (SELECT * FROM SupportSQL_UserLog) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV HEADER
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_autosettlement_details.sql');
+\COPY (SELECT * FROM SupportSQL_UserLog) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
