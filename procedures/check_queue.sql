@@ -9,7 +9,7 @@ SELECT BankWithdrawals.SendingBankAccountID,
        BankWithdrawalTypes.BankWithdrawalType AS Type,
        BankWithdrawalStates.BankWithdrawalState AS State,
        BankWithdrawals.Currency,
-       array_agg(DISTINCT UserCategories.Name) AS UserCategories,
+       --array_agg(DISTINCT UserCategories.Name) AS UserCategories, --another perhaps irrelevant attribute
        count(*),
        sum(BankWithdrawals.Amount),
        max(now() - BankWithdrawals.Datestamp)::interval(0) AS MaxDelay,
@@ -25,7 +25,7 @@ SELECT BankWithdrawals.SendingBankAccountID,
   JOIN BankWithdrawalStates ON (BankWithdrawalStates.BankWithdrawalStateID = BankWithdrawals.BankWithdrawalStateID)
   JOIN Users ON (Users.UserID = BankWithdrawals.UserID)
   JOIN UserCategories ON (UserCategories.UserCategoryID = Users.UserCategoryID)
- WHERE View_Bank_Withdrawals_In_Queue.Enabled IS TRUE
+ --WHERE View_Bank_Withdrawals_In_Queue.Enabled IS TRUE --Do we need this?
  GROUP BY 1, 2, 3, 4, 5
  ORDER BY count(*) DESC;
 
