@@ -47,9 +47,12 @@ WITH EnduserOrders AS(
   )
       SELECT EnduserOrders.OrderID,
              EnduserOrders.Username AS ProcessingAccount,
-             COALESCE(OrdersKYCData.Name, TransferBankAccounts.Name) AS Enduser_name,
+             OrdersKYCData.Name AS depositor_name,
+             TransferbanKAccounts.Name AS TransferBankAccounts_name,
+             array['Entities_name:', unaccent(lower(Public.Entities.name))::text, 'OrderAttributes_name:', unaccent(lower(concat(OrderAttributes.firstname, ' ',OrderAttributes.lastname)))::text, 'KYC.PNPOrders:', unaccent(lower(concat(KYC.PnpOrders.kycdata::json->'firstname', ' ', KYC.PnpOrders.kycdata::json->'lastname')))::text, 'KYC.Entities:', unaccent(lower(concat(KYC.Entities.firstname, ' ',KYC.Entities.lastname)))::text, 'KYC.Endusers:', unaccent(lower(concat(kyc.endusers.firstname, ' ', kyc.endusers.lastname)))::text] AS Captured_names,
              Orders.EnduserID,
              TransferBankAccounts.PersonID,
+             OrdersKYCData.Dob,
              WorkerTypes.name AS OrderType,
              Orders.datestamp::timestamp(0) AS Initiated_On,
              Orders.APIAmount,
@@ -57,8 +60,14 @@ WITH EnduserOrders AS(
              Orders.APICurrency
         FROM EnduserOrders
         JOIN Orders ON EnduserOrders.OrderID = Orders.OrderID
-        JOIN TransferBankAccounts ON TransferBankAccounts.TransferBankAccountID = EnduserOrders.transferbankaccountID
-        LEFT JOIN OrdersKYCData ON OrdersKYCData.OrderID = EnduserOrders.OrderID
+        LEFT JOIN Public.Entities ON Entities.EntityID = Orders.EntityID
+        LEFT JOIN OrderAttributes ON (OrderAttributes.OrderID = EnduserOrders.orderid) AND (Orderattributes.FirstName IS NOT NULL) AND (OrderAttributes.LastName IS NOT NULL)
+        LEFT JOIN OrdersKycData ON (OrdersKycData.OrderID = EnduserOrders.orderid)
+        LEFT JOIN KYC.PnpOrders ON (KYC.PnpOrders.OrderID = EnduserOrders.orderid)
+        LEFT JOIN KYC.OrdersEntity ON KYC.OrdersEntity.OrderID = EnduserOrders.orderid
+        LEFT JOIN KYC.Entities ON (KYC.Entities.kycentityid = KYC.ordersentity.kycentityid)
+        LEFT JOIN kyc.endusers ON  kyc.endusers.kycenduserID = KYC.OrdersEntity.kycenduserID
+        LEFT JOIN TransferBankAccounts ON TransferBankAccounts.TransferBankAccountID = EnduserOrders.transferbankaccountID
         LEFT JOIN Workertypes ON Workertypes.WorkertypeID = Orders.InitOrderTypeID
        ORDER BY Orders.datestamp ASC
 ;
