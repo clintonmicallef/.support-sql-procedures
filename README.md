@@ -185,3 +185,7 @@ You can login to the database as per usual:
 ```bash
 livedb
 ```
+
+### Using Google Drive for Access Log**
+
+Install `Google Drive File Stream` and follow the instructions to initialise sync through your work email account.

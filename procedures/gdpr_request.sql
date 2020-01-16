@@ -7,6 +7,8 @@
 \prompt 'Please enter an TransferBankAccountID or press enter to continue', transferbankaccount
 \prompt 'Please enter an the AccountNumber or press enter to continue', bankaccountnumber
 
+\set QUIET ON
+
 \pset expanded on
 
 WITH Data AS (
@@ -66,6 +68,12 @@ WITH Data AS (
         replace(replace(replace(replace(DATA.email::text,'{',''),'}',''),'"',''),',NULL','') AS emailaddress
    FROM DATA
 ;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'gdpr_request.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
 
 --OR ENTER PERSONID
 --OR ENTER BANKACCOUNTN NNUMBER

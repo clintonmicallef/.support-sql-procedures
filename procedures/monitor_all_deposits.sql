@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', input
 
+\set QUIET ON
+
 \pset expanded off
 
 \echo '\n'
@@ -72,3 +74,9 @@ WITH EntrystepsHealth AS(
    GROUP BY 1,2,3,4,5,6,7,8,9,10,12,13,14, Done_percent, not_percent
    ORDER BY country, name, EntrystepID, identifier, COUNT DESC
 ;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'monitor_all_deposits.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

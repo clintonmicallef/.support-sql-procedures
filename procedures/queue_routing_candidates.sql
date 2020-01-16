@@ -2,6 +2,8 @@
 
 \prompt 'Please enter an EcoSysAccount', ecosysaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH Queued_Withdrawals AS (
@@ -82,3 +84,9 @@ WITH Queued_Withdrawals AS (
                  WHERE Queued_Withdrawals_SBA_Candidates.BankWithdrawalID = Queued_Withdrawals.BankWithdrawalID) AS SBA_Candidates
           FROM Queued_Withdrawals
 ;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'queue_routing_candidates.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

@@ -4,6 +4,8 @@
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', delay
 \prompt 'Would you like results per minute or hour?', result
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH Deposit_Monitor AS(
@@ -48,3 +50,9 @@ WITH Deposit_Monitor AS(
         --,lastorderstep
    FROM Deposit_Monitor m
   ORDER BY 1;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'entrystep_incident_overview.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

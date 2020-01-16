@@ -2,6 +2,8 @@
 
 \prompt 'Please enter the PersonID', personID
 
+\set QUIET ON
+
 \pset expanded off
 
 SELECT BankOrders.OrderID,
@@ -21,3 +23,9 @@ SELECT BankOrders.OrderID,
   LEFT JOIN TransferStates CurrentTransferState ON (CurrentTransferState.TransferStateID = Transfers.TransferStateID)
  WHERE BankOrders.PersonID = :'personID'
    AND BankOrders.Datestamp > current_date-20;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'plausible_balance.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

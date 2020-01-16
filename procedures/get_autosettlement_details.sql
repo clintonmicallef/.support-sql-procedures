@@ -235,6 +235,7 @@ WITH PARAMETERS(processingaccount) AS(
 ;
 
 
-INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_queue.sql');
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_autosettlement_details.sql');
 \COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
 \COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

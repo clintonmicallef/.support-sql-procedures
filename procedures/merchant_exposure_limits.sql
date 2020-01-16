@@ -2,6 +2,8 @@
 
 \prompt 'Please enter a Processing Account', processingaccount
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH test AS(
@@ -80,3 +82,9 @@ WITH test AS(
         FROM test;
 
 \echo 'Please note there might be EndUser Specific Limits!'
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'merchant_exposure_limits.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

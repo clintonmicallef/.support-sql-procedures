@@ -4,6 +4,8 @@
 \prompt 'Please enter the currency', currency
 \prompt 'Please enter a date and time (YYYY-MM-DD HH:MM)', timedate
 
+\set QUIET ON
+
 \pset expanded off
 
 WITH  Parameters(Date,Currency,Username) AS (
@@ -78,3 +80,9 @@ GROUP BY ClosingBalance.Balance
         ELSE
         format('NEGATIVE_BALANCE FOR PA: %s IN CURRENCY: %s, FOR DATE: %s', Parameters.Username,Parameters.Currency,Parameters.Date) END AS Result
         FROM AccountLedger,Parameters;
+
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
+INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'merchant_balance_at_datetime.sql');
+\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
+\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

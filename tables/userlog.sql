@@ -1,4 +1,4 @@
--- Create temporary table for user access log with imported stats
+-- Create temporary table to import data from useraccesslog.csv in Support Shared Google Drive
 \cd :local_path_supportsqlprocedures/procedures
 \set QUIET ON
 DROP TABLE IF EXISTS pg_temp.SupportSQL_UserLog;

@@ -82,7 +82,7 @@ Example alias: `git_update` which the user runs to pull from the GIT repository 
 
 **Create temporary tables.**
 
-Here we set a link to the 'Tables' folder within the repository and run the files within. These files create tables are populated by collecting the data from the repository's folders (/procedures, /functions, /views).
+Here we set a link to the 'Tables' folder within the repository and run the files within. These files create tables are populated by collecting the data from the repository's folders (/procedures, /functions, /views, /userlog, /userlogexport).
 _These temporary tables are an essential part of the repository and will be used by other scripts._
 
 **Import functions and views**
@@ -105,6 +105,12 @@ As `init.psql` is referred from the `.PSQLRC` file, these `\set` assignments are
 
 
 **Displays a start-up Menu**
+
+
+**Import functions and views**
+
+As a user access log, every procedure execute finished with 3 lines of code, an INSERT, a COPY TO and a COPY FROM.
+This inserts into a temporary table the user, datestamp and procedure run. In turn this is saved (copied into) in `userraccesslog.csv` file in the Support Shared Google Drive. The copy from, copies from this file in the google drive, back to the SQL REPO into another temporary table. The copy to is also executed on start up through the PSQLRC (init.psql) file.
 
 
 # REQUIREMENTS
