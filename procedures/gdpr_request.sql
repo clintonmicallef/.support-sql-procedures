@@ -3,70 +3,71 @@
    Not to author: Query needs updating when new KYC model is launched with KYC schema */
 
 \prompt 'Please enter an OrderID', orderID
-\prompt 'Please enter a PersonID or press enter to continue', person
-\prompt 'Please enter an TransferBankAccountID or press enter to continue', transferbankaccount
-\prompt 'Please enter an the AccountNumber or press enter to continue', bankaccountnumber
 
 \set QUIET ON
 
 \pset expanded on
 
-WITH Data AS (
+WITH CollectedData AS(
   SELECT DISTINCT
-  /*1*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.Name), lower(E.Name), lower(KYC.Entities.Name), lower(TransferBankAccounts.Name), lower(TransferBankAccounts.kycdata::json->>'name'), CONCAT(lower(OrderAttributes.FirstName),' ',lower(OrderAttributes.LastName)), CONCAT(lower(KYC.PNPOrders.kycdata::json->>'firstname'),' ',lower(KYC.PNPOrders.kycdata::json->>'lastname')) ))) AS Name,
-  /*2*/  (ARRAY_AGG(DISTINCT COALESCE(OrdersKYCData.dob, KYC.Entities.dob, (KYC.PnPOrders.kycdata::json->>'dob')::date, TransferBankAccounts.dob, OrderAttributes.dob))) AS DateOfBirth,
-  /*3*/  (ARRAY_AGG(DISTINCT COALESCE(OrdersKYCData.gender, KYC.Entities.gender, TransferBankAccounts.gender))) AS Gender,
-  /*4*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.address), lower(kyc.entities.fulladdress::json->>'address'), lower(E.address), lower(TransferBankAccounts.address), lower(OrderAttributes.address)))) AS Address,
-  /*5*/  (ARRAY_AGG(DISTINCT COALESCE(OrdersKYCData.zipcode, kyc.entities.fulladdress::json->>'zipcode', E.zipcode, TransferBankAccounts.zipcode))) AS ZipCode,
-  /*6*/  (ARRAY_AGG(DISTINCT COALESCE(lower(OrdersKYCData.City), lower(kyc.entities.fulladdress::json->>'city'), lower(E.City), lower(TransferBankAccounts.city), lower(OrderAttributes.locale)))) AS City,
-  /*7*/  (ARRAY_AGG(DISTINCT COALESCE(Upper(OrdersKYCData.Country), Upper(kyc.entities.fulladdress::json->>'country'), Upper(E.Country), Upper(TransferBankAccounts.Country), Upper(Countries.Name)))) AS Country,
-  /*8*/  (ARRAY_AGG(DISTINCT COALESCE(replace(replace(TransferBankAccounts.PersonIDs::text,'{',''),'}',''), OrdersKYCData.PersonID, (kyc.PnpOrders.kycdata::json->>'personid'), kyc.entities.personid, E.PersonID, OrderAttributes.NationalIdentificationNumber))) AS PersonID,
-  /*9*/  (ARRAY_AGG(DISTINCT COALESCE(TransferBankAccounts.AccountNumber, OrderAttributes.AccountNumber, (kyc.PnpOrders.kycdata::json->'accounts')::text))) AS BankAccounts,
-  /*10*/ (ARRAY_AGG(DISTINCT COALESCE(replace(replace(replace(KYC.Entities.phonenumber, '+', ''), ' ', ''), '-',''), replace(replace(replace(OrderAttributes.mobilephone, '+',''), ' ', ''), '-','')))) AS PhoneNumbers,
-  /*11*/ (ARRAY_AGG(DISTINCT COALESCE(lower(E.Email), lower(OrderAttributes.Email), lower(kyc.entities.email)))) AS Email
-  /*12*/-- (ARRAY_AGG(DISTINCT COALESCE(lower(E.Email), lower(OrderAttributes.Email), lower(kyc.entities.email)))) AS IsRegisteredBlocked
+         unnest(array[lower(TransferBankAccounts.Name), lower(Public.Entities.Name), lower(concat(OrderAttributes.FirstName,' ',OrderAttributes.LastName)), lower(TransferBankAccounts.KYCData::json->>'name'), lower(OrdersKycData.Name), lower(concat(KYC.PnpOrders.kycdata::json->>'firstName', ' ',KYC.PnpOrders.kycdata::json->>'lastName')), lower(KYC.Entities.Name), lower(KYC.Endusers.Name)]) AS Names,
+         unnest(array[(OrdersKycData.Dob), (KYC.Entities.dob), (TransferBankAccounts.Dob), (OrderAttributes.Dob), (KYC.PnpOrders.Dob)]) AS DatesofBirth,
+         unnest(array[(OrdersKycData.Gender), (KYC.Entities.Gender), (TransferBankAccounts.Gender)]) AS Genders,
+         unnest(array[lower(OrdersKycData.Address), lower(KYC.Entities.FullAddress::json->>'address'), lower(Public.Entities.Address), lower(TransferBankAccounts.Address), lower(KYC.PnpOrders.kycdata::json->>'street'::text)]) AS Addresses,
+         unnest(array[(OrdersKycData.Zipcode), (Public.Entities.Zipcode), (TransferBankAccounts.Zipcode), (KYC.PnpOrders.kycdata::json->>'Zipcode'::text)]) AS Zipcodes,
+         unnest(array[lower(OrdersKycData.City), lower(Public.Entities.City), lower(TransferBankAccounts.City), lower(KYC.PNPorders.kycdata::json->>'city')]) AS Cities,
+         unnest(array[upper(OrdersKycData.Country), upper(Public.Entities.Country), upper(TransferBankAccounts.Country), upper(Countries.Name)]) AS Countries,
+         unnest(array[(Public.Entities.PersonID), (TransferBankAccounts.PersonID), (array_to_string(TransferBankAccounts.PersonIDs,',')), (KYC.Entities.PersonID), (OrdersKycData.personID), (KYC.PnpOrders.PersonID), (OrderAttributes.NationalIdentificationNumber)]) AS PersonIDs,
+         unnest(array[(TransferBankAccounts.AccountNumber), (KYC.PnpOrders.kycdata::json->'accounts'->(0)->>'fullaccountnumber'::text), (KYC.PnpOrders.kycdata::json->'accounts'->(1)->>'fullaccountnumber'::text), (KYC.PnpOrders.kycdata::json->'accounts'->(2)->>'fullaccountnumber'::text), (KYC.PnpOrders.kycdata::json->'accounts'->(3)->>'fullaccountnumber'::text), (KYC.PnpOrders.kycdata::json->'accounts'->(4)->>'fullaccountnumber'::text)]) AS BankAccounts,
+         unnest(array[(replace(replace(replace(KYC.Entities.PhoneNumber, '+', ''), ' ', ''), '-','')), (replace(replace(replace(OrderAttributes.MobilePhone, '+',''), ' ', ''), '-',''))]) AS PhoneNumbers,
+         unnest(array[lower(Public.Entities.Email), lower(KYC.Entities.Email), lower(OrderAttributes.Email), lower(KYC.Endusers.Email)]) AS EmailAddresses,
+         unnest(array[(Sessions.EnduserHost)]) AS IPAddresses,
+         unnest(array[concat(EnduserClientPlatforms.os, ' ', EnduserClientPlatforms.osversion)]) AS OperatingSystems,
+         unnest(array[concat(EnduserClientPlatforms.browser, ' ', EnduserClientPlatforms.browserversion)]) AS Browsers,
+         unnest(array[EnduserClientPlatforms.hardware]) AS Hardware,
+         unnest(array[BlockedPersons.Reason]) AS BlockedReasons
     FROM Orders
-    LEFT JOIN Entities E ON (E.EntityID = Orders.EntityID)
-    LEFT JOIN BankOrders ON (BankOrders.OrderID = Orders.OrderID)
-    LEFT JOIN OrderBankAccounts ON (OrderBankAccounts.OrderID = Orders.OrderID)
-    LEFT JOIN TransferBankAccounts ON (TransferBankAccounts.TransferBankAccountID = (COALESCE(BankOrders.TransferBankAccountID, OrderBankAccounts.TransferBankAccountID)))
-    LEFT JOIN LATERAL(
-      SELECT DISTINCT OrderID
-        FROM BankOrders
-       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() - interval '24 months'
-       UNION
-      SELECT DISTINCT orderID
-        FROM orderbankaccounts
-       WHERE TransferBankAccountID = TransferBankAccounts.TransferBankAccountID AND Datestamp >= now() - interval '24 months'
-       UNION
-      SELECT DISTINCT orderID
-        FROM BankOrderTransfers
-       WHERE (ToTransferBankAccountID = TransferBankAccounts.TransferBankAccountID OR FromTransferBankAccountID = TransferBankAccounts.TransferBankAccountID) AND Datestamp >= now() - interval '24 months'
-     ) AS OrdersCollection ON TRUE
-    LEFT JOIN OrderAttributes ON (OrderAttributes.OrderID = (COALESCE(OrdersCollection.OrderID, Orders.OrderID))) AND (Orderattributes.FirstName IS NOT NULL) AND (OrderAttributes.LastName IS NOT NULL)
+    JOIN (
+      SELECT OrderIDs, TransferBankAccountIDs
+        FROM pg_temp.get_related_orderids(:'orderID')
+      ) OrdersCollection ON OrdersCollection.OrderIDs = Orders.orderID
+    LEFT JOIN Public.Entities ON Entities.EntityID = Orders.EntityID
+    LEFT JOIN OrderAttributes ON (OrderAttributes.OrderID = OrdersCollection.orderids) AND (Orderattributes.FirstName IS NOT NULL) AND (OrderAttributes.LastName IS NOT NULL)
+    LEFT JOIN TransferBankAccounts ON TransferBankAccounts.TransferBankAccountID = OrdersCollection.TransferBankAccountIDs
     LEFT JOIN Countries ON (Countries.code = OrderAttributes.Country)
-    LEFT JOIN OrdersKYCData ON (OrdersKYCData.OrderID = OrdersCollection.OrderID)
-    LEFT JOIN kyc.PnpOrders ON (kyc.PnpOrders.OrderID = OrdersCollection.OrderID)
-    LEFT JOIN kyc.OrdersEntity  ON (kyc.OrdersEntity.OrderID = OrdersCollection.OrderID)
-    LEFT JOIN kyc.Entities ON (kyc.Entities.KYCEntityID = KYC.OrdersEntity.KYCEntityID)
-   WHERE (SELECT CASE WHEN NULLIF(:'person','') IS NOT NULL THEN :'person' = ANY(TransferBankAccounts.personIDs)
-                      WHEN NULLIF(:'transferbankaccount','') IS NOT NULL THEN TransferBankAccounts.TransferBankAccountID = :'transferbankaccount'
-                      WHEN NULLIF(:'bankaccountnumber','') IS NOT NULL THEN TransferBankAccounts.Accountnumber = :'bankaccountnumber'
-                      WHEN (NULLIF(:'orderID',''))::bigint IS NOT NULL THEN Orders.OrderID = (:'orderID')::bigint ELSE NULL END)
- )
- SELECT DISTINCT
-        INITCAP(replace(replace(replace(replace(DATA.name::text,'{',''),'}',''),'"',''),',NULL','')) AS name,
-        replace(replace(replace(replace(DATA.dateofbirth::text,'{',''),'}',''),'"',''),',NULL','') AS dateofbirth,
-        replace(replace(replace(replace(DATA.gender::text,'{',''),'}',''),'"',''),',NULL','') AS gender,
-        INITCAP(replace(replace(replace(replace(DATA.address::text,'{',''),'}',''),'"',''),',NULL','')) AS address,
-        UPPER(replace(replace(replace(replace(DATA.zipcode::text,'{',''),'}',''),'"',''),',NULL','')) AS zipcode,
-        INITCAP(replace(replace(replace(replace(DATA.city::text,'{',''),'}',''),'"',''),',NULL','')) AS city,
-        replace(replace(replace(replace(DATA.country::text,'{',''),'}',''),'"',''),',NULL','') AS country,
-        replace(replace(replace(replace(DATA.personid::text,'{',''),'}',''),'"',''),',NULL','') AS personid,
-        replace(replace(replace(replace(replace(replace(replace(DATA.bankaccounts::text,'{',''),'}',''),'"',''),',NULL',''),'\\',''),'[',''),']','') AS bankaccounts,
-        replace(replace(replace(replace(DATA.phonenumbers::text,'{',''),'}',''),'"',''),',NULL','') AS phonenumber,
-        replace(replace(replace(replace(DATA.email::text,'{',''),'}',''),'"',''),',NULL','') AS emailaddress
-   FROM DATA
+    LEFT JOIN OrdersKycData ON (OrdersKycData.OrderID = OrdersCollection.orderids)
+    LEFT JOIN KYC.PnpOrders ON (KYC.PnpOrders.OrderID = OrdersCollection.orderids)
+    LEFT JOIN KYC.OrdersEntity ON KYC.OrdersEntity.OrderID = OrdersCollection.orderids
+    LEFT JOIN KYC.Entities ON (KYC.Entities.kycentityid = KYC.ordersentity.kycentityid)
+    --LEFT JOIN kyc.bankentities
+    --LEFT JOIN kyc.bankentitiesaccounts
+    LEFT JOIN kyc.endusers ON  kyc.endusers.kycenduserID = KYC.OrdersEntity.kycenduserID
+    --LEFT JOIN kyc.endusersentities
+    LEFT JOIN Sessions ON Sessions.SessionID = (SELECT SessionID FROM Orders WHERE OrderID = OrdersCollection.orderids)
+    LEFT JOIN OrderFingerPrints ON OrderFingerPrints.OrderID = OrdersCollection.orderids
+    LEFT JOIN FingerPrints ON FingerPrints.FingerprintID = OrderFingerPrints.fingerprintid
+    LEFT JOIN EnduserClientPlatforms ON enduserclientplatforms.enduserclientplatformid = FingerPrints.enduserclientplatformid
+    LEFT JOIN BlockedPersons ON BlockedPersons.Personid = ANY(TransferBankAccounts.PersonIDs)
+    WHERE Orders.OrderID = OrdersCollection.OrderIds
+  )
+  SELECT DISTINCT
+         array_to_string(array_agg(DISTINCT names),',') AS Names,
+         array_to_string(array_agg(DISTINCT DatesofBirth),',') AS DateOfBirths,
+         array_to_string(array_agg(DISTINCT genders),',') AS Genders,
+         array_to_string(array_agg(DISTINCT addresses),',') AS Addresses,
+         array_to_string(array_agg(DISTINCT zipcodes),',') AS ZipCodes,
+         array_to_string(array_agg(DISTINCT cities),',') AS Cities,
+         array_to_string(array_agg(DISTINCT countries),',') AS Countries,
+         array_to_string(array_agg(DISTINCT PersonIDs),',') AS PersonIDs,
+         array_to_string(array_agg(DISTINCT BankAccounts),',') AS BankAccounts,
+         array_to_string(array_agg(DISTINCT PhoneNumbers),',') AS PhoneNumbers,
+         array_to_string(array_agg(DISTINCT EmailAddresses),',') AS EmailAddresses,
+         array_to_string(array_agg(DISTINCT IPAddresses),',') AS IPAddresses,
+         array_to_string(array_agg(DISTINCT OperatingSystems),',') AS OperatingSystems,
+         array_to_string(array_agg(DISTINCT Browsers),',') AS Browsers,
+         array_to_string(array_agg(DISTINCT Hardware),',') AS HardWare,
+         array_to_string(array_agg(DISTINCT BlockedReasons),',') AS BlockedReasons
+    FROM CollectedData
 ;
 
 
@@ -74,60 +75,3 @@ WITH Data AS (
 INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'gdpr_request.sql');
 \COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
 \COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
-
---OR ENTER PERSONID
---OR ENTER BANKACCOUNTN NNUMBER
-
-/* Revamp notes:
-TransferBankAccounts
-accountnumber, iban, balance, personids, personid, name, address, zipcode, city, dob, gender, coutry
-
-Entities
-email, personnid, name, address, zipcode, city, country, extendedmobilebankid
-
-OrderAttributes
-firstname, lastname, country, accountnumber, email, NationalIdentificationNumber, address, dob, ip, mobilephone
-
-OrdersKYCData
-name, dob, personid, gender, address, zipcode, city, coutry, email
-
-autogiro.outgoingmandaterecords
-accountnnumber, personid
-
-autogiro.mandateadvicerecords
-bankaccountnumber, personid,
-
-autogiro.payers
-accountnumber, personId
-
-
-enduserclientplatforms
-os, osversio, browser, browserversion, hardware
-
-browseruseragents
-value,
-
-orderfingerprints
-
-sessions
-enduserhost (IP)
-
-blockedpersons
-personid, reason
-
-bankorders
-personid, balance
-
-kyc.pnporders
-kycdata {dob, accounts, fullaccountnumber, balance, firstname, lastname}, personid, dob
-
-kyc.entities
-personid, firstname, lastname, name, dob, fulladdress, email, phonenumber, geder
-
-kyc.bankentities
-name
-
-
-kyc.endusers
-firstname, lastname, name, email
-*/
