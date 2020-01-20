@@ -36,14 +36,15 @@ WITH EnduserOrders AS(
     JOIN TransferBankAccounts ON TransferBankAccounts.AccountID = autogiro.Payers.AccountID
     WHERE TransferBankAccounts.TransferBankAccountID = :'transferbankaccountID'
      AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
-   UNION
+     --Remove PNPOrders as PnpLogins do not follow unique TransferBankAccountID and here we are searching for end user acitivty pertaining to a particular transferbankaccountID. PNP deposits will be in bankorders. 
+   /*UNION
   SELECT DISTINCT PnpOrders.OrderID, Users.username, TransferBankAccountID
     FROM KYC.PnpOrders
     JOIN Orders ON Orders.OrderID = PnpOrders.OrderID
     JOIN Users ON Users.UserID = Orders.UserID
     JOIN KYC.bankentitiesaccounts ON kyc.bankentitiesaccounts.BankEntityID = KYC.PNPOrders.BankEntityID
    WHERE TransferBankAccountID = :'transferbankaccountID'
-     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
+     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)*/
   )
       SELECT EnduserOrders.OrderID,
              EnduserOrders.Username AS ProcessingAccount,
