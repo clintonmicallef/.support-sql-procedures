@@ -36,7 +36,7 @@ WITH EnduserOrders AS(
     JOIN TransferBankAccounts ON TransferBankAccounts.AccountID = autogiro.Payers.AccountID
     WHERE TransferBankAccounts.TransferBankAccountID = :'transferbankaccountID'
      AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
-     --Remove PNPOrders as PnpLogins do not follow unique TransferBankAccountID and here we are searching for end user acitivty pertaining to a particular transferbankaccountID. PNP deposits will be in bankorders. 
+     --Remove PNPOrders as PnpLogins do not follow unique TransferBankAccountID and here we are searching for end user acitivty pertaining to a particular transferbankaccountID. PNP deposits will be in bankorders.
    /*UNION
   SELECT DISTINCT PnpOrders.OrderID, Users.username, TransferBankAccountID
     FROM KYC.PnpOrders
@@ -54,7 +54,7 @@ WITH EnduserOrders AS(
              Orders.EnduserID,
              TransferBankAccounts.PersonID,
              OrdersKYCData.Dob,
-             WorkerTypes.name AS OrderType,
+             concat(WorkerTypes.name,' ',OrderStepsinWAPIRAPI.Name) AS OrderType,
              Orders.datestamp::timestamp(0) AS Initiated_On,
              Orders.APIAmount,
              TransferBankaccounts.Balance,
@@ -70,6 +70,13 @@ WITH EnduserOrders AS(
         LEFT JOIN kyc.endusers ON  kyc.endusers.kycenduserID = KYC.OrdersEntity.kycenduserID
         LEFT JOIN TransferBankAccounts ON TransferBankAccounts.TransferBankAccountID = EnduserOrders.transferbankaccountID
         LEFT JOIN Workertypes ON Workertypes.WorkertypeID = Orders.InitOrderTypeID
+        LEFT JOIN LATERAL(
+          SELECT DISTINCT OrderTypeID, OrderStepWorkerTypes.Name
+            FROM OrderSteps
+            JOIN WorkerTypes OrderStepWorkerTypes ON OrderStepWorkerTypes.WorkerTypeID = OrderSteps.OrderTypeID
+           WHERE OrderSteps.OrderID = Orders.OrderID
+             AND OrderStepWorkerTypes.Name IN ('WAPI','RAPI')
+           ) AS OrderStepsinWAPIRAPI ON TRUE
        ORDER BY Orders.datestamp ASC
 ;
 
