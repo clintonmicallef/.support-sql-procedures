@@ -27,7 +27,7 @@ WITH Deposit_Monitor AS(
     JOIN users ON orders.userid=users.userid
    WHERE orders.datestamp >= now() - :'delay'::interval--*/  between '2019-05-12 00:03' and '2019-05-13 10:38'
      AND entrystepid = :'entrystepID'
-     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
+     --AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
    GROUP BY 1
    ORDER BY 1
  )
