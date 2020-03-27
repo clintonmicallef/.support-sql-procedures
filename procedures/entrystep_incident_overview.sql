@@ -1,7 +1,6 @@
 /* Extended information on EntryStep performance including conversion */
 
 \prompt 'Please enter the EntrystepID', entrystepID
-\prompt 'Enter a ProcessingAccount or press enter to continue', processingaccount
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', delay
 \prompt 'Would you like results per minute or hour?', result
 
