@@ -1,6 +1,7 @@
 /* Extended information on EntryStep performance including conversion */
 
 \prompt 'Please enter the EntrystepID', entrystepID
+\prompt 'Enter a ProcessingAccount or press enter to continue', processingaccount
 \prompt 'Please enter an interval (including unit of time example: 2 hours)', delay
 \prompt 'Would you like results per minute or hour?', result
 
@@ -26,7 +27,7 @@ WITH Deposit_Monitor AS(
     JOIN users ON orders.userid=users.userid
    WHERE orders.datestamp >= now() - :'delay'::interval--*/  between '2019-05-12 00:03' and '2019-05-13 10:38'
      AND entrystepid = :'entrystepID'
-     --AND Orders.userid = GET_USERID('avanza')
+     AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)
    GROUP BY 1
    ORDER BY 1
  )
