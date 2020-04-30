@@ -23,7 +23,7 @@ WITH cte(bankaccountid, amount, date) AS (
   SELECT
     count(*) as "Payments in Ledger",
     CASE
-      WHEN ((bankledger.processed = 0 AND is_safe_deposit(bankledger.bankledgerid) IS TRUE) OR (bankledger.unclaimedat IS NOT NULL AND bankledger.bookedasrevenueat IS NULL)) AND (BankAccounts.allowclaim = 1 AND BankAccounts.Active = 1 )
+      WHEN ((bankledger.processed = 0 AND is_safe_deposit(bankledger.bankledgerid) IS TRUE) OR (bankledger.unclaimedat IS NOT NULL AND bankledger.bookedasrevenueat IS NULL)) AND (BankAccounts.allowclaim = 1)
       THEN 'YES'
       ELSE 'NO'
     END AS "Claimable by the merchant"
