@@ -20,7 +20,7 @@ SELECT APICallID,
 WHERE Method = :'method' AND
       Username = :'processingaccount' AND
       Datestamp >= :'orderdate' AND
-      (SignedResult::json->'data'->>'orderid')::bigint = :'orderid'
+      ((SignedResult::json->'data'->>'orderid')::bigint = :'orderid' OR (ResultData::json->>'orderid')::bigint = :'orderid')
 ;
 
 
