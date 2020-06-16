@@ -1,7 +1,7 @@
 /* Merchant's Account ledger wihout limits */
 
 \prompt 'Please enter the processing account', processingaccount
-\prompt 'Please enter a currency', currency
+\prompt 'Please enter a currency or press enter to continue', currency
 \prompt 'Please enter a date from', datefrom
 \prompt 'Please enter a date to', dateto
 
