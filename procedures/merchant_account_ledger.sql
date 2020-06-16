@@ -31,7 +31,7 @@ SELECT Users.Username,
  WHERE FlagValues.FlagID = CONST_Username_FlagID()
    AND Users.UserID = Get_UserID(:'processingaccount')
    --AND Events.ChainID IN (1035269865) -- IN (SELECT ChainID FROM Events JOIN BankDeposits USING (EventID) WHERE BankDepositID IN (4177324776, 2836884290))
-   AND (COALESCE(FXTrades.NewCurrency,FlagValueAccountingTransactions.Currency) = :'currency')
+   AND (SELECT CASE WHEN NULLIF(:'currency','') IS NOT NULL THEN (COALESCE(FXTrades.NewCurrency,FlagValueAccountingTransactions.Currency) = :'currency') ELSE 'TRUE' END)
    AND FlagValueAccountingTransactions.RecordDate >= :'datefrom'
    AND FlagValueAccountingTransactions.RecordDate <= :'dateto'
    --AND FlagValueAccountingTransactions.EventID = 831074768
