@@ -12,7 +12,7 @@
 SELECT APICallID,
       Method,
       json_pretty(data) AS Data_Received,
-      json_pretty(signedresult) AS Data_Sent,
+      json_pretty(COALESCE(signedresult::text,resultdata::text)) AS Data_Sent,
       host,
       datestamp,
       username

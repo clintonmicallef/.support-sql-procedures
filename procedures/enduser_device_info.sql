@@ -10,6 +10,7 @@ SELECT OrderFingerPrints.OrderID,
        enduserclientplatforms.*,
        browseruseragents.value as useragent,
        IntegrationAuthenticationMethods.Name AS LoginAuthenticationMethod,
+       OrderFingerPrints.enduserhost,
        FingerPrints.lastseen
   FROM EnduserClientPlatforms
   JOIN FingerPrints ON (FingerPrints.enduserclientplatformid = EnduserClientPlatforms.enduserclientplatformid)
