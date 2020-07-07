@@ -61,10 +61,10 @@ SELECT BankAccounts.BankAccountID,
       FROM BankWIthdrawals
      WHERE BankWithdrawalStateID = 1 --QUEUED
        AND BankWithdrawalTypeID = 3 --EXPRESS
-       AND Datestamp >=now()-'7 days'::interval
+       AND Datestamp >=now()-'4 days'::interval
      GROUP BY 1
   ) AS Delays ON Delays.SendingBankAccountId = BankWithdrawals.SendingBankAccountID
- WHERE BankWithdrawals.Datestamp >= current_date - '1 weeks'::interval
+ WHERE BankWithdrawals.Datestamp >= current_date - '4 days'::interval
    --AND BankWithdrawals.ModificationDate < now() - '5 minutes'::interval
    --AND BankAccounts.Ecosysaccount = 'CLIENT_FUNDS_POLAND_WBKP'
    AND BankWithdrawals.TimestampExecuted IS NULL
