@@ -1,4 +1,5 @@
 /* Function used to copy user activity run by every procedures in repo, into an export temp table (making sure table is clean before not to copy duplicates from previous activity) */
+DROP FUNCTION pg_temp.user_log_function(_username text, _datestamp timestamp, _procedure text);
 \set QUIET ON
 CREATE OR REPLACE FUNCTION pg_temp.user_log_function(_username text, _datestamp timestamp, _procedure text)
   RETURNS boolean
