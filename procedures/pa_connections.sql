@@ -15,5 +15,7 @@ SELECT m2m.fromuserid, m2m.touserid, fu.username AS fromuser, tu.username AS tou
 
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+\t
 SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'pa_connections');
+\t
 \i '~/.support-sql-procedures/userlogsetup.psql'

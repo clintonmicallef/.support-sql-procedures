@@ -34,7 +34,6 @@
 
 -- Set quite mode back to normal
 -- \unset QUIET
-\timing ON
 \set QUIET OFF
 
 -- Menu

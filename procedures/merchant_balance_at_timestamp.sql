@@ -49,5 +49,7 @@ WITH ClosingBalance AS (
 ;
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+\t
 SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'merchant_balance_at_timestamp');
+\t
 \i '~/.support-sql-procedures/userlogsetup.psql'
