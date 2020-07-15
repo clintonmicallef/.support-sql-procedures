@@ -12,6 +12,7 @@ SELECT table_schema, table_name
 
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\set QUIET ON
+\t
 SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'search_table');
+\t
 \i '~/.support-sql-procedures/userlogsetup.psql'
