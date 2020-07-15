@@ -28,7 +28,6 @@
 \echo 'Values take last 7 days into account'
 
 
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
-INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'entrystep_deposit_settlement_stats.sql');
-\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
-\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'entrystep_deposit_settlement_stats');
+\i '~/.support-sql-procedures/userlogsetup.psql'

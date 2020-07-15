@@ -39,7 +39,6 @@ SELECT Candidates.*
 LIMIT 5;
 
 
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
-INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'get_withdrawal_routes.sql');
-\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
-\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'get_withdrawal_routes');
+\i '~/.support-sql-procedures/userlogsetup.psql'

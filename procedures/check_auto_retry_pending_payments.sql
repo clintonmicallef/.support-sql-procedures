@@ -54,7 +54,6 @@ SELECT BankWithdrawals.BankWithdrawalID,  BankAccounts.EcoSysAccount, BankWithdr
 
 \echo "Best to be run after :check_safe_to_retry"
 
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
-INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'check_auto_retry_pending_payments.sql');
-\COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
-\COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'check_auto_retry_pending_payments');
+\i '~/.support-sql-procedures/userlogsetup.psql'

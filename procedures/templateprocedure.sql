@@ -15,6 +15,13 @@ SELECT 1
 ;
 
 
+
+-- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
+SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'merchant_entrysteps');
+\i '~/.support-sql-procedures/userlogsetup.psql'
+
+
+--BELOW IS OLD
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table.
 INSERT INTO SupportSQL_UserLogExport VALUES (user, now(), 'all_enduser_activity.sql'); --Change to name of file!!!***
 \COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
