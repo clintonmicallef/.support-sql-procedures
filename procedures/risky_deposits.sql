@@ -13,7 +13,7 @@ SELECT * FROM pg_temp._risky_deposits(NULL);
 \prompt 'do you want to fail these deposits?', answer
 \echo ''
 
-SELECT * FROM pg_temp._risky_deposits(:'answerfinal');
+SELECT * FROM pg_temp._risky_deposits(:'answer');
 
 \pset pager on
 
