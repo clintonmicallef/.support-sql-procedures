@@ -12,8 +12,6 @@ SELECT * FROM pg_temp._risky_deposits(NULL);
 
 \prompt 'do you want to fail these deposits?', answer
 \echo ''
-\prompt 'are you sure?', answerfinal
-\echo ''
 
 SELECT * FROM pg_temp._risky_deposits(:'answerfinal');
 
