@@ -2,7 +2,7 @@
 --Related to procedure:
 
 CREATE OR REPLACE FUNCTION pg_temp._risky_deposits(_tofail text DEFAULT NULL)
-   RETURNS TABLE(datestamp timestamp(0), orderid bigint, username character varying, enduserid text, entrystepid integer, fromclearinghouse character varying, frombank text, risky boolean, amount numeric, currency character(3), missingdays integer, avgdays integer, referencetext text, toclearinghouse character varying, tobank text, ecosysaccount character varying, transferid bigint, externalaccountholder boolean, totalfrombank bigint, totaltobank bigint)
+   RETURNS TABLE(datestamp timestamp(0), orderid bigint, username character varying, enduserid text, entrystepid integer, fromclearinghouse character varying, frombank text, risky boolean, amount numeric, currency character(3), missingdays integer, avgdays integer, referencetext text, toclearinghouse character varying, tobank text, ecosysaccount character varying, transferid bigint, externalaccountholder boolean, totalfrombank bigint, totaltobank bigint, fail_deposit_transfer boolean)
    LANGUAGE plpgsql
    STABLE
 AS $function$
@@ -133,7 +133,7 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
                          ) /*NEW*/
                    ORDER BY unsettled.EcoSysAccount, unsettled.entrystepid, unsettled.datestamp ASC
                 )
-                SELECT fail.*
+                SELECT fail.*, 'false'::boolean AS fail_deposit_transfer
                   FROM fail;
       ELSIF _tofail = 'yes'
          THEN
