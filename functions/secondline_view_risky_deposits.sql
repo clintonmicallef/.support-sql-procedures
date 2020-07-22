@@ -112,7 +112,6 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
                     LEFT JOIN banknumbers ON banknumbers.banknumber::text = unsettled.tobanknumber AND banknumbers.clearinghouseid = unsettled.toclearinghouseid
                     LEFT JOIN banks ON banks.bankid = banknumbers.bankid
                    WHERE (now()::date - unsettled.datestamp::date) > LEAST(7, avgsettlementtime.avgdays)
-                   AND Unsettled.username = 'creditstar'
                      AND (now() - '12:00:00'::interval) > unsettled.datestamp
                      AND  ordersteptypes.name !~~ 'DepositSwedenNDEABibit.%'::text
              /*NEW*/ AND (now()::date - unsettled.datestamp::date)>=10

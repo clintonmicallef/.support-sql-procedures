@@ -20,6 +20,8 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
   THEN
     IF _tofail = 'yes'
       THEN
+        RAISE NOTICE 'Failing risky depsits...';
+
         SELECT TransferID, SUM(COUNT(*)) over()
           INTO _transferID,
                _count
@@ -28,8 +30,8 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
 
           IF _transferID IS NOT NULL
             THEN PERFORM fail_deposit_transfer(TransferID) FROM pg_temp.secondline_view_risky_deposits();
-            RETURN TRUE;
             RAISE NOTICE 'Failed % deposits', _count;
+            RETURN TRUE;
           ELSE RAISE EXCEPTION 'No transfers to fail!';
           END IF;
 
