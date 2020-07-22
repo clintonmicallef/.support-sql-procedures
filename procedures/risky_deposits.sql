@@ -10,12 +10,14 @@
 
 SELECT * FROM pg_temp._risky_deposits(NULL);
 
+\pset pager on
+
 \prompt 'do you want to fail these deposits?', answer
 \echo ''
 
 SELECT * FROM pg_temp._risky_deposits(:'answer');
 
-\pset pager on
+
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
 \t
