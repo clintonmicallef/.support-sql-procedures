@@ -115,6 +115,7 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
                     LEFT JOIN banknumbers ON banknumbers.banknumber::text = unsettled.tobanknumber AND banknumbers.clearinghouseid = unsettled.toclearinghouseid
                     LEFT JOIN banks ON banks.bankid = banknumbers.bankid
                    WHERE (now()::date - unsettled.datestamp::date) > LEAST(7, avgsettlementtime.avgdays)
+                     AND Unsettled.Username IN ('skrill','betathome','videoslots')
                      AND (now() - '12:00:00'::interval) > unsettled.datestamp
                      AND  ordersteptypes.name !~~ 'DepositSwedenNDEABibit.%'::text
              /*NEW*/ AND (now()::date - unsettled.datestamp::date)>=10
@@ -137,7 +138,7 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
                   FROM fail;
       ELSIF _tofail = 'yes'
          THEN
-          RAISE NOTICE 'Failing deposit transfers!';
+          RAISE NOTICE 'Failing deposit transfers! - This process might take some time. Please do not interrupt this process.';
           RETURN QUERY
           WITH unsettled AS(
             SELECT orders.orderid,
@@ -235,6 +236,7 @@ IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
                     LEFT JOIN banknumbers ON banknumbers.banknumber::text = unsettled.tobanknumber AND banknumbers.clearinghouseid = unsettled.toclearinghouseid
                     LEFT JOIN banks ON banks.bankid = banknumbers.bankid
                    WHERE (now()::date - unsettled.datestamp::date) > LEAST(7, avgsettlementtime.avgdays)
+                     AND Unsettled.Username IN ('skrill','betathome','videoslots')
                      AND (now() - '12:00:00'::interval) > unsettled.datestamp
                      AND  ordersteptypes.name !~~ 'DepositSwedenNDEABibit.%'::text
              /*NEW*/ AND (now()::date - unsettled.datestamp::date)>=10

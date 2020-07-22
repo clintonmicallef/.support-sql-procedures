@@ -10,7 +10,7 @@
 
 SELECT * FROM pg_temp._risky_deposits(NULL);
 
-\prompt 'do you want to fail these deposits?', answer
+\prompt 'do you want to fail these deposits? [yes/no]', answer
 \echo ''
 
 SELECT * FROM pg_temp._risky_deposits(:'answer');
