@@ -2,15 +2,11 @@
 
 \set QUIET ON
 
-\pset pager off
-
 \pset expanded off
 
 \echo 'Loading risky deposits...'
 
 SELECT * FROM pg_temp._risky_deposits(NULL);
-
-\pset pager on
 
 \prompt 'do you want to fail these deposits?', answer
 \echo ''
