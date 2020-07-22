@@ -4,6 +4,8 @@
 
 \pset expanded off
 
+\pset pager off
+
 \echo 'Loading risky deposits...'
 
 SELECT * FROM pg_temp._risky_deposits(NULL);
@@ -14,9 +16,11 @@ SELECT * FROM pg_temp._risky_deposits(NULL);
 SELECT * FROM pg_temp._risky_deposits(:'answer');
 
 
-
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
 \t
 SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'risky_deposits');
 \t
 \i '~/.support-sql-procedures/userlogsetup.psql'
+
+
+\pset pager on
