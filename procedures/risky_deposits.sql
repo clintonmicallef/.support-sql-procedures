@@ -4,8 +4,6 @@
 
 \pset expanded off
 
-\pset pager off
-
 \echo 'Loading risky deposits...'
 
 SELECT * FROM pg_temp.secondline_view_risky_deposits();
@@ -21,6 +19,3 @@ SELECT * FROM pg_temp.secondline_fail_risky_deposits(:'answer');
 SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'risky_deposits');
 \t
 \i '~/.support-sql-procedures/userlogsetup.psql'
-
-
-\pset pager on
