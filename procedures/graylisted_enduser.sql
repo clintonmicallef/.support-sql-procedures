@@ -16,17 +16,12 @@ SELECT transfers.transferid,
        transferstates.name AS transferstate,
        transfers.datestamp::timestamp(0),
        orders.enduserid,
-       transfers.triggeredpending::timestamp(0),
        transfers.triggeredcredit::timestamp(0),
-       transfers.triggeredcancel::timestamp(0),
        transfers.triggereddebit::timestamp(0),
        eventnamechains.name AS eventnamechain,
        forgivenfailedtransfers.datestamp::timestamp(0) AS forgiven,
        forgivenfailedtransfers.datestamp IS NULL AND (transfersystems.name = ANY (ARRAY['DirectRouting'::text, 'Autogiro'::text])) AS showforgivebutton,
-       eventnamechainbalances.personid AS personid,
-       (CASE WHEN forgivenfailedvolumes.PersonID = eventnamechainbalances.personid AND forgivenfailedvolumes.UserID IS NOT NULL THEN 'FORGIVEN_LOCALLY: ' || (SELECT Username FROM Users WHERE forgivenfailedvolumes.UserID = Users.UserID)
-             WHEN forgivenfailedvolumes.PersonID = eventnamechainbalances.personid AND forgivenfailedvolumes.UserID IS NULL THEN 'FORGIVEN_GLOBALLY'
-             ELSE 'GRAYLISTED' END) as BlockType
+       eventnamechainbalances.personid AS personid
   FROM transfers
   JOIN transfersystems ON (transfersystems.transfersystemid = transfers.transfersystemid)
   JOIN eventnamechainbalances ON (eventnamechainbalances.eventnamechainbalanceid = transfers.eventnamechainbalanceid)
