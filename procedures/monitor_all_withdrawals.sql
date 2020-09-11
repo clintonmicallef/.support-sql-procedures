@@ -83,7 +83,7 @@ SELECT BankAccounts.BankAccountID,
                        AND BlackListedBankAccounts.ToAccountNumber = BankWithdrawals.ToAccountNumber
                   )
    --  BankWithdrawals.DeQueued = 1
- GROUP BY 1, 2, 3, 4, 5, 6, 7, 10, 11, 13, 14, 15, 16, 19
+ GROUP BY 1, 2, 3, 4, 5, 6, 9, 10, 12, 13, 14, 15
  ORDER BY BankWithdrawalState DESC, count(*) DESC;
 
 
