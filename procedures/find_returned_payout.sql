@@ -14,7 +14,8 @@
 \echo '*    STATEMENT    *'
 \echo '*******************\n'
 ​
-WITH tmp AS (--Add new case for each bank which generate new bankreferencenumber (CSV statement)
+WITH tmp AS (
+  --Add new case for each bank which generate new bankreferencenumber (CSV statement)
    SELECT
       CASE
          WHEN ecosysaccount ilike 'CLIENT_FUNDS_ESTONIA_LHVB%' THEN (
@@ -26,7 +27,9 @@ WITH tmp AS (--Add new case for each bank which generate new bankreferencenumber
       ledger.view_all_rows
    WHERE
       reference = :'bankwithdrawalid'
+
    UNION -- Add new case for each bank which generate new bankreferencenumber (MT940  statement)
+
    SELECT
       CASE
          WHEN ecosysaccount ilike 'CLIENT_FUNDS_UNITED_KINGDOM_CITI%' THEN (
@@ -83,7 +86,9 @@ WHERE
       OR (array_to_string(textcolumns,',') ilike '%' || (SELECT "reference" FROM cte) || '%')
       OR (array_to_string(textcolumns,',') ilike '%' || (SELECT "bankreferencenumber" FROM tmp) || '%')
       )
+
 UNION
+
 SELECT
    'MT940' as "statement",
   statementlineid,
