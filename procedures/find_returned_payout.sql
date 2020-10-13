@@ -2,7 +2,7 @@
 
 --EXAMPLES: 3855645276,4224908393,3704506155,2029808911,3798653319(only ledger atm)
 
-\prompt 'Enter bankLedgerID to find a returned payment: ' bankwithdrawalid
+\prompt 'Enter BankWithdrawalID to find a returned payment: ' bankwithdrawalid
 
 \set QUIET ON
 
