@@ -6,8 +6,7 @@
 ​
 \pset expanded ON
 ​
---Add new case for each bank which generate new bankreferencenumber (CSV statement)
-WITH tmp AS (
+WITH CTEA AS (
    SELECT
       CASE
          WHEN ecosysaccount ilike 'CLIENT_FUNDS_ESTONIA_LHVB%' THEN (
@@ -32,7 +31,7 @@ WITH tmp AS (
    WHERE
       reference = :'bankwithdrawalid'
 ),
-cte AS (
+cteB AS (
    SELECT
       w.bankwithdrawalid as "reference",
       w.sendingbankaccountid AS "bankaccountid",
