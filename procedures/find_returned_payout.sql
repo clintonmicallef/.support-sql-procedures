@@ -212,6 +212,7 @@ WHERE
    AND amount = (SELECT "amount" FROM cte)
    AND claimable;
 ​
+*/
 \echo 'ALWAYS DOUBLE CHECK THE RESULT!\n'
 ​
 \pset expanded AUTO
