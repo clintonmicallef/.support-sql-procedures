@@ -111,7 +111,7 @@ WHERE
       OR (array_to_string(textcolumns,',') ilike '%' || (SELECT "reference" FROM cte) || '%')
       OR (array_to_string(textcolumns,',') ilike '%' || (SELECT "bankreferencenumber" FROM tmp) || '%')
       );
-​
+​/*
 \echo '*******************'
 \echo '*   BANK LEDGER   *'
 \echo '*******************\n'
