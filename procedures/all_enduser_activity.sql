@@ -56,7 +56,7 @@ WITH EnduserOrders AS(
              TransferbanKAccounts.Name AS TransferBankAccount,
              OrdersKYCData.Name AS LegacyOrderKYCData,
              unaccent(lower(concat(OrderAttributes.firstname, ' ',OrderAttributes.lastname)))::text AS OrderAttributes,
-             NULLIF(concat(Notifications.request::json->'data'->'attributes'->>'name', ', ', Notifications.request::json->'data'->'attributes'->>'personid'),', ') AS AccountNotificationData,
+             COALESCE(Notifications.request::json->'data'->'attributes'->>'name', Notifications.dataparam::json->'attributes'->>'name') AS AccountNotification,
              Orders.EnduserID,
              kyc.Entities.PublicEntityID,
              COALESCE(TransferBankAccounts.PersonID, Public.ENtities.PersonID, Kyc.OrdersVerifiedKYCData.PersonID, KYC.Entities.PersonID, PnpOrders.PersonID, OrdersKYCData.PersonID) AS PersonID,
