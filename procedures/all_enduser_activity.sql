@@ -1,6 +1,6 @@
 /* PROCEDURE:Shows all activty of the end user's particular bank account (TransferBankAccountID) with Trustly */
 
-\prompt 'Please enter a TransferBankAccountID (one or more)', transferbankaccountID
+\prompt 'Please enter a TransferBankAccountID', transferbankaccountID
 \prompt 'Please enter a ProcessingAccount or press enter to continue', processingaccount
 
 \set QUIET ON
@@ -46,27 +46,30 @@ WITH EnduserOrders AS(
    WHERE TransferBankAccountID = :'transferbankaccountID'
      AND (SELECT CASE WHEN NULLIF(:'processingaccount','') IS NOT NULL THEN Users.Username = :'processingaccount' ELSE 'TRUE' END)*/
   )
-      SELECT EnduserOrders.OrderID,
+      SELECT Orders.datestamp::timestamp(0) AS Datestamp,
+             EnduserOrders.OrderID,
              EnduserOrders.Username AS ProcessingAccount,
-             TransferbanKAccounts.Name AS TransferBankAccounts_name,
-             OrdersKYCData.Name AS depositor_name,
-             Kyc.Entities.Name AS Entity_name,
+             OrdersVerifiedKYCData.Name AS VerifiedKYC,
+             Kyc.Entities.Name AS KYCEntity,
+             Public.Entities.Name AS Entities,
+             concat(PNPOrders.kycdata::json->>'firstname',' ', PNPOrders.kycdata::json->>'lastname') AS PNPOrders,
+             TransferbanKAccounts.Name AS TransferBankAccount,
+             OrdersKYCData.Name AS LegacyOrderKYCData,
+             unaccent(lower(concat(OrderAttributes.firstname, ' ',OrderAttributes.lastname)))::text AS OrderAttributes,
              NULLIF(concat(Notifications.request::json->'data'->'attributes'->>'name', ', ', Notifications.request::json->'data'->'attributes'->>'personid'),', ') AS AccountNotificationData,
-             unaccent(lower(concat(OrderAttributes.firstname, ' ',OrderAttributes.lastname)))::text AS OrderAttributes_name,
              Orders.EnduserID,
              kyc.Entities.PublicEntityID,
-             TransferBankAccounts.PersonID,
-             OrdersKYCData.Dob,
+             COALESCE(TransferBankAccounts.PersonID, Public.ENtities.PersonID, Kyc.OrdersVerifiedKYCData.PersonID, KYC.Entities.PersonID, PnpOrders.PersonID, OrdersKYCData.PersonID) AS PersonID,
              concat(WorkerTypes.name,' ',OrderStepsinWAPIRAPI.Name) AS OrderType,
-             Orders.datestamp::timestamp(0) AS Datestamp,
-             Orders.APIAmount,
-             Orders.APICurrency
+             Orders.PaymentAmount,
+             Orders.PaymentCurrency
         FROM EnduserOrders
         JOIN Orders ON EnduserOrders.OrderID = Orders.OrderID
         LEFT JOIN Notifications ON Notifications.ApiMethod = 'account' AND Notifications.OrderID = Orders.OrderID
         LEFT JOIN Public.Entities ON Entities.EntityID = Orders.EntityID
         LEFT JOIN OrderAttributes ON (OrderAttributes.OrderID = EnduserOrders.orderid) AND (Orderattributes.FirstName IS NOT NULL) AND (OrderAttributes.LastName IS NOT NULL)
         LEFT JOIN OrdersKycData ON (OrdersKycData.OrderID = EnduserOrders.orderid)
+        LEFT JOIN KYC.OrdersVerifiedKYCData ON OrdersVerifiedKYCData.OrderID = EnduserOrders.OrderID
         LEFT JOIN KYC.PnpOrders ON (KYC.PnpOrders.OrderID = EnduserOrders.orderid)
         LEFT JOIN KYC.OrdersEntity ON KYC.OrdersEntity.OrderID = EnduserOrders.orderid
         LEFT JOIN KYC.Entities ON (KYC.Entities.kycentityid = KYC.ordersentity.kycentityid)
