@@ -60,6 +60,7 @@ WITH EnduserOrders AS(
              Orders.EnduserID,
              kyc.Entities.PublicEntityID,
              COALESCE(TransferBankAccounts.PersonID, Public.ENtities.PersonID, Kyc.OrdersVerifiedKYCData.PersonID, KYC.Entities.PersonID, PnpOrders.PersonID, OrdersKYCData.PersonID) AS PersonID,
+             KYC.Entities.KycEntityID,
              concat(WorkerTypes.name,' ',OrderStepsinWAPIRAPI.Name) AS OrderType,
              Orders.PaymentAmount,
              Orders.PaymentCurrency
