@@ -86,16 +86,17 @@ WITH EnduserOrders AS(
        ORDER BY Orders.datestamp ASC
 ;
 
-\n
-\echo "Definitions:"
-\echo "verifiedkyc -> name we send in account notification to merchant"
-\echo "kycentity -> name we captured from end user bank login"
-\echo "entities -> Legacy name storage"
-\echo "pnporders -> name we capture during a PNP deposit from online bank"
-\echo "transferbankaccount -> dynamically changing name according to what we find in online bank account"
-\echo "legacyorderkycdata -> name storage up till august 2020"
-\echo "orderattributes -> name merchant is sending us in their api call (unverified)"
-\echo "accountnotification -> name we send in account notification to merchant (before we had verifiedkyc model)"
+\echo **********************************************************************************************************
+\echo Definitions:
+\echo 1. verifiedkyc -> name we send in account notification to merchant
+\echo 2. kycentity -> name we captured from end user bank login
+\echo 3. entities -> Legacy name storage
+\echo 4. pnporders -> name we capture during a PNP deposit from online bank
+\echo 5. transferbankaccount -> dynamically changing name according to what we find in online bank account
+\echo 6. legacyorderkycdata -> name storage up till august 2020
+\echo 7. orderattributes -> name merchant is sending us in their api call (unverified)
+\echo 8. accountnotification -> name we send in account notification to merchant (before we had verifiedkyc model)
+\echo **********************************************************************************************************
 
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
