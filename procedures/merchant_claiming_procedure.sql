@@ -19,7 +19,6 @@ WITH cte(bankaccountid, amount, date) AS (
     bankledgerid = :'bankledgerid'
   )
   SELECT
-    count(*) as "Payments in Ledger",
     CASE
       WHEN ((bankledger.processed = 0 AND is_safe_deposit(bankledger.bankledgerid) IS TRUE) OR (bankledger.unclaimedat IS NOT NULL AND bankledger.bookedasrevenueat IS NULL)) AND (BankAccounts.allowclaim = 1)
       THEN 'YES'
@@ -44,7 +43,6 @@ WITH cte(bankaccountid, amount, date) AS (
       FROM cte
     )
     AND (Processed = 0 OR Processedas::text = 'UNCLAIMED')
-   GROUP  BY 2
 ;
 
 \echo 'Claiming Tool Details:'
