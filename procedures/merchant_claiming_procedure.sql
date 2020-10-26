@@ -11,7 +11,8 @@ WITH BankledgerCandidateDetails AS(
          BankLedger.bankaccountid,
          BankLedger.amount,
          COALESCE(BankLedger.Transactiondate,BankLedger.Recorddate) AS date,
-         BankLedger.GlueID
+         BankLedger.GlueID,
+         Bankledger.Statementtext
   FROM BankLedger
  WHERE BankLedger.bankledgerid = :'bankledgerid'
   )
@@ -46,7 +47,12 @@ WITH BankledgerCandidateDetails AS(
    WHERE bankledger.bankaccountid IN (SELECT bankaccountid FROM BankledgerCandidateDetails)
      AND amount IN (SELECT amount FROM BankledgerCandidateDetails)
      AND Transactiondate IN (SELECT date FROM BankledgerCandidateDetails)
-     AND (Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails) OR Bankledger.GLUEID IS NULL)
+     AND (
+         ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails))
+      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
+      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND bankledger.statementtext::text ILIKE '%' || (SELECT GlueID from BankledgerCandidateDetails) || '%')
+      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND (SELECT statementtext from BankledgerCandidateDetails) ILIKE '%' || Bankledger.glueID || '%')
+         )
    GROUP BY 1,2,3,4,5,6,8,10
 ;
 
