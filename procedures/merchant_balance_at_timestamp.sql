@@ -41,11 +41,12 @@ WITH ClosingBalance AS (
       AND NOT EXISTS (SELECT 1 FROM FXTrades WHERE FXTrades.FXEventID = FlagValueAccountingTransactions.EventID AND FXTrades.EventID IS NOT NULL)
     GROUP BY 1,3
   )
-  SELECT AccountLedger.Username,
-         AccountLedger.Currency,
-         ClosingBalance.Balance + AccountLedger.TotalAmount AS Balance_at_datestamp
+  SELECT ClosingBalance.Username,
+         ClosingBalance.Currency,
+         :'dateandtime' AS dateparameter,
+         ClosingBalance.Balance + COALESCE(AccountLedger.TotalAmount,0.00) AS Balance
     FROM AccountLedger
-    JOIN ClosingBalance ON ClosingBalance.Username = AccountLedger.Username AND ClosingBalance.Currency = AccountLedger.Currency
+    RIGHT JOIN ClosingBalance ON ClosingBalance.Username = AccountLedger.Username AND ClosingBalance.Currency = AccountLedger.Currency
 ;
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
