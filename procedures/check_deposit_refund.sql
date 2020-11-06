@@ -15,6 +15,8 @@ WITH Parameters AS(
     LEFT JOIN Transfers ON Transfers.OrderID = Orders.ORderID AND Transfers.TransferTypeID = 4
     JOIN Users ON Users.UserID = Orders.UserID
    WHERE Orders.OrderID = :'orderid'
+   ORDER BY DebitDatestamp DESC
+   LIMIT 1
  )
  SELECT (CASE WHEN APICalls.APICallID IS NOT NULL THEN 'Merchant Refund via API' ELSE NULL END) AS Case,
         datestamp AS Datestamp,
