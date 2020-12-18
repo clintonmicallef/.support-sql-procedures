@@ -12,19 +12,27 @@
 SELECT entrysteps.entrystepid,
        entrysteps.identifier,
        entrysteps.name,
-       clearinghouses.name AS cleairnghouse, 
+       clearinghouses.name AS cleairnghouse,
        workertypes.name AS type,
        entrysteps.standard,
-       entrysteps.disabled,
+       entrysteps.disabled::timestamp(0),
        entrysteps.allowdirectdebit,
        entrysteps.preferformandateregistration,
        entrysteps.standardformandateregistration,
        entrysteps.isopenbanking,
-       entrysteps.supportspnp
+       entrysteps.supportspnp,
+       NoofOrders.count AS Orderslast12hr
   FROM entrysteps
   JOIN clearinghouses ON clearinghouses.clearinghouseID = entrysteps.clearinghouseID
   JOIN ordersteptypes ON ordersteptypes.ordersteptypeid = entrysteps.ordersteptypeid
   JOIN workertypes ON workertypes.workertypeid = ordersteptypes.ordertypeid
+  LEFT JOIN LATERAL(
+    SELECT EntrystepID, COUNT(*)
+      FROM Orders
+     WHERE Orders.datestamp >= now() - interval '12 hours'
+       AND Orders.UserID != get_userid('apitest')
+     GROUP BY 1
+  ) NoofOrders ON NoofOrders.EntrystepID = Entrysteps.EntrystepID
  WHERE clearinghouses.Name = :'clearinghouse'
    AND category = :'category'
    AND entrysteps.name ILIKE '%' || :'name' || '%'
