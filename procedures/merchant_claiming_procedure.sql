@@ -10,7 +10,7 @@ WITH BankledgerCandidateDetails AS(
   SELECT BankLedger.BankledgerID,
          BankLedger.bankaccountid,
          BankLedger.amount,
-         COALESCE(BankLedger.Transactiondate,BankLedger.Recorddate) AS date,
+         COALESCE(BankLedger.Recorddate, BankLedger.Transactiondate) AS date,
          BankLedger.GlueID,
          Bankledger.Statementtext
   FROM BankLedger
@@ -33,7 +33,7 @@ WITH BankledgerCandidateDetails AS(
         FROM MT94xparser.statementlines
        WHERE accountidentificationID IN (SELECT accountidentificationid FROM MT94xparser.accountIdentifications WHERE AccountIdentification IN (SELECT Accountidentification FROM bankaccounts where bankaccountid = bankledger.bankaccountid))
          AND amount = bankledger.amount
-         AND balancedate = bankledger.transactiondate
+         AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
          AND (glueid = bankledger.glueID OR glueid IS NULL)
     ) AS MTStatements ON TRUE
     LEFT JOIN LATERAL(
@@ -41,12 +41,12 @@ WITH BankledgerCandidateDetails AS(
         FROM Ledger.rows
        WHERE ledgeraccountID IN (SELECT ledgeraccountid from ledger.accounts where accountidentification IN (SELECT ecosysaccount from bankaccounts where bankaccountid = bankledger.bankaccountid))
          AND amount = bankledger.amount
-         AND balancedate = bankledger.transactiondate
+         AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
          AND (reference = bankledger.glueID OR reference IS NULL)
     ) AS CSVStatements ON TRUE
    WHERE bankledger.bankaccountid IN (SELECT bankaccountid FROM BankledgerCandidateDetails)
      AND amount IN (SELECT amount FROM BankledgerCandidateDetails)
-     AND Transactiondate IN (SELECT date FROM BankledgerCandidateDetails)
+     AND COALESCE(recorddate, transactiondate) IN (SELECT date FROM BankledgerCandidateDetails)
      AND (
          ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails))
       OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
@@ -90,7 +90,7 @@ WHERE
           SELECT BankLedger.BankledgerID,
                  BankLedger.bankaccountid,
                  BankLedger.amount,
-                 COALESCE(BankLedger.Transactiondate,BankLedger.Recorddate) AS date,
+                 COALESCE(BankLedger.Recorddate, BankLedger.Transactiondate) AS date,
                  BankLedger.GlueID,
                  Bankledger.Statementtext
           FROM BankLedger
@@ -113,7 +113,7 @@ WHERE
                 FROM MT94xparser.statementlines
                WHERE accountidentificationID IN (SELECT accountidentificationid FROM MT94xparser.accountIdentifications WHERE AccountIdentification IN (SELECT Accountidentification FROM bankaccounts where bankaccountid = bankledger.bankaccountid))
                  AND amount = bankledger.amount
-                 AND balancedate = bankledger.transactiondate
+                 AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
                  AND (glueid = bankledger.glueID OR glueid IS NULL)
             ) AS MTStatements ON TRUE
             LEFT JOIN LATERAL(
@@ -121,12 +121,12 @@ WHERE
                 FROM Ledger.rows
                WHERE ledgeraccountID IN (SELECT ledgeraccountid from ledger.accounts where accountidentification IN (SELECT ecosysaccount from bankaccounts where bankaccountid = bankledger.bankaccountid))
                  AND amount = bankledger.amount
-                 AND balancedate = bankledger.transactiondate
+                 AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
                  AND (reference = bankledger.glueID OR reference IS NULL)
             ) AS CSVStatements ON TRUE
            WHERE bankledger.bankaccountid IN (SELECT bankaccountid FROM BankledgerCandidateDetails)
              AND amount IN (SELECT amount FROM BankledgerCandidateDetails)
-             AND Transactiondate IN (SELECT date FROM BankledgerCandidateDetails)
+             AND COALESCE(recorddate, transactiondate) IN (SELECT date FROM BankledgerCandidateDetails)
              AND (
                  ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails))
               OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
