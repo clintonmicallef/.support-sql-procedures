@@ -5,6 +5,7 @@
 \pset expanded off
 
 SELECT Entrysteps.EntrystepID,
+       Workertypes.Name AS Worker,
        Entrysteps.Identifier,
        Countries.Name AS Country,
        Entrysteps.Name,
@@ -15,6 +16,8 @@ SELECT Entrysteps.EntrystepID,
        (CASE WHEN (doneratelast24hrs.Donerate - ROUND( (  (  (COUNT(*) FILTER(WHERE OrderstatusID = 100)) / (SUM(COUNT(*)) over(Partition BY Entrysteps.EntrystepID)) )::numeric ) * 100, 2)) > 10 THEN 'ALERT' ELSE NULL END) AS Notification
   FROM Orders
   JOIN Entrysteps ON Entrysteps.EntrystepID = Orders.EntrystepID AND Entrysteps.Category = 'deposit'
+  JOIN ordersteptypes ON ordersteptypes.ordersteptypeid = entrysteps.ordersteptypeid
+  JOIN workertypes ON workertypes.workertypeid = ordersteptypes.ordertypeid
   JOIN Countries ON Countries.CountryID = Entrysteps.CountryID
   LEFT JOIN LATERAL(
     SELECT Orders.EntrystepID, ROUND( (  (  (COUNT(*) FILTER(WHERE OrderstatusID = 100)) / (SUM(COUNT(*)) over(Partition BY Orders.EntrystepID)) )::numeric ) * 100, 2) AS donerate
