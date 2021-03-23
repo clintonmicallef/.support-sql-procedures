@@ -27,7 +27,7 @@ SELECT Entrysteps.EntrystepID,
      GROUP BY 1
   ) AS doneratelast24hrs ON doneratelast24hrs.EntrystepID = Entrysteps.EntrystepID
  WHERE Orders.Datestamp BETWEEN now() - interval '18 mins' AND now() - interval '2 mins'
- GROUP BY 1,2,3,6
+ GROUP BY 1,2,3,4,7
  ORDER BY COUNT(*) DESC
 ;
 
