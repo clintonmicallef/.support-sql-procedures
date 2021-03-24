@@ -142,4 +142,4 @@ RETURN;
 END;
 $function$;
 
-echo 'To Fail, run function: pg_temp.secondline_fail_risky_deposits';
+\echo 'To Fail, run function: pg_temp.secondline_fail_risky_deposits';
