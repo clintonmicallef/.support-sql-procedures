@@ -139,6 +139,6 @@ ELSE RAISE EXCEPTION 'Unauthorised Access - 2nd line access only';
 END IF;
 
 RETURN;
-\echo 'To Fail, run function: pg_temp.secondline_fail_risky_deposits';
 END;
+\echo 'To Fail, run function: pg_temp.secondline_fail_risky_deposits';
 $function$;
