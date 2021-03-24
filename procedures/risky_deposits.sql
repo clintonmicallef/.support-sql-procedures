@@ -6,12 +6,7 @@
 
 \echo 'Loading risky deposits...'
 
-SELECT * FROM pg_temp.secondline_view_risky_deposits();
-
-\prompt 'do you want to fail these deposits? [yes/no]', answer
-\echo ''
-
-SELECT * FROM pg_temp.secondline_fail_risky_deposits(:'answer');
+SELECT * FROM pg_temp.secondline_view_risky_deposits_upd();
 
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.

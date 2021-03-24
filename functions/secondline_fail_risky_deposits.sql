@@ -16,7 +16,7 @@ BEGIN
 
 SELECT user INTO _loggedinuser;
 
-IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
+IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
   THEN
     IF _tofail = 'yes'
       THEN
