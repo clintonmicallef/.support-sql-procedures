@@ -135,7 +135,7 @@ IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
                 SELECT fail.*
                   FROM fail;
 
-        RAISE NOTICE 'To Fail run function: pg_temp.secondline_fail_risky_deposits';
+        echo 'To Fail, run function: pg_temp.secondline_fail_risky_deposits';
 
 ELSE RAISE EXCEPTION 'Unauthorised Access - 2nd line access only';
 END IF;
