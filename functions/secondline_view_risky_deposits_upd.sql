@@ -15,8 +15,9 @@ BEGIN
 SELECT user INTO _loggedinuser;
 
 IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
-  THEN RETURN QUERY
+  THEN
     RAISE NOTICE 'Loading risky deposits';
+    RETURN QUERY
        WITH unsettled AS(
        SELECT orders.orderid,
                    users.username,
@@ -134,7 +135,7 @@ IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
                 SELECT fail.*
                   FROM fail;
 
-        RAISE NOTICE 'To Fail run function: pg_temp.secondline_fail_risky_deposits'
+        RAISE NOTICE 'To Fail run function: pg_temp.secondline_fail_risky_deposits';
 
 ELSE RAISE EXCEPTION 'Unauthorised Access - 2nd line access only';
 END IF;

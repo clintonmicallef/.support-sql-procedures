@@ -23,11 +23,11 @@ IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
         SELECT TransferID, SUM(COUNT(*)) over()
           INTO _transferID,
                _count
-          FROM pg_temp.secondline_view_risky_deposits()
+          FROM pg_temp.secondline_view_risky_deposits_upd()
          GROUP BY 1;
 
           IF _transferID IS NOT NULL
-            THEN PERFORM fail_deposit_transfer(TransferID) FROM pg_temp.secondline_view_risky_deposits();
+            THEN PERFORM fail_deposit_transfer(TransferID) FROM pg_temp.secondline_view_risky_deposits_upd();
             RAISE NOTICE 'Failed % deposits', _count;
             RETURN TRUE;
           ELSE RAISE EXCEPTION 'No transfers to fail!';
