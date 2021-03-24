@@ -1,17 +1,12 @@
-/* 2nd Line procedure to query risky deposits and fail according to input by 2nd line agent. Note that validation for access privelages done in risky_deposots() function*/
+/* (only) Calls the view function to show risky deposits */
 
 \set QUIET ON
 
 \pset expanded off
 
-\echo 'Loading risky deposits...'
-
 SELECT * FROM pg_temp.secondline_view_risky_deposits();
 
-\prompt 'do you want to fail these deposits? [yes/no]', answer
-\echo ''
-
-SELECT * FROM pg_temp.secondline_fail_risky_deposits(:'answer');
+SELECT (CASE WHEN user IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas') THEN 'RUN: pg_temp.secondline_fail_risky_deposits(), to fail' ELSE NULL END) AS Notice;
 
 
 -- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.

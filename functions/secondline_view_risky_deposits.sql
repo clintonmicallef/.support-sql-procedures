@@ -14,8 +14,10 @@ BEGIN
 
 SELECT user INTO _loggedinuser;
 
-IF _loggedinuser IN ('artiomturkov', 'benjaminschembri', 'dimitriossliakas')
-  THEN RETURN QUERY
+IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
+  THEN
+    RAISE NOTICE 'Loading risky deposits';
+    RETURN QUERY
        WITH unsettled AS(
        SELECT orders.orderid,
                    users.username,
