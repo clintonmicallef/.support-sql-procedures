@@ -1,7 +1,7 @@
 --2nd Line function to view risky deposits and fail them according to input by agent
---Related to procedure:
+--Related to procedure: risky_deposits.sql
 
-CREATE OR REPLACE FUNCTION pg_temp.secondline_fail_risky_deposits()
+CREATE OR REPLACE FUNCTION pg_temp.secondline_fail_risky_deposits(_tofail text)
    RETURNS boolean
    LANGUAGE plpgsql
 
@@ -17,6 +17,8 @@ BEGIN
 SELECT user INTO _loggedinuser;
 
 IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
+  THEN
+    IF _tofail = 'yes'
       THEN
         RAISE NOTICE 'Failing risky depsits...';
 
@@ -32,6 +34,12 @@ IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
             RETURN TRUE;
           ELSE RAISE EXCEPTION 'No transfers to fail!';
           END IF;
+
+    ELSIF _tofail = 'no'
+      THEN RAISE NOTICE 'No actions taken. Exiting...';
+
+    ELSE RAISE EXCEPTION 'Incorrect input. Enter ''yes'' to fail deposit transfers or ''no'' to exit';
+    END IF;
 
 ELSE RAISE EXCEPTION 'Unauthorised Access - 2nd line access only';
 END IF;

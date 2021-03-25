@@ -1,5 +1,5 @@
 --2nd Line function to view risky deposits and fail them according to input by agent
---Related to procedure:
+--Related to procedure: risky_deposits.sql
 
 CREATE OR REPLACE FUNCTION pg_temp.secondline_view_risky_deposits()
    RETURNS TABLE(datestamp timestamp(0), orderid bigint, username character varying, enduserid text, entrystepid integer, fromclearinghouse character varying, frombank text, risky boolean, amount numeric, currency character(3), missingdays integer, avgdays integer, referencetext text, toclearinghouse character varying, tobank text, ecosysaccount character varying, transferid bigint, extaccholder boolean, totalfrombank bigint, totaltobank bigint)
@@ -16,7 +16,7 @@ SELECT user INTO _loggedinuser;
 
 IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
   THEN
-    RAISE NOTICE 'Loading risky deposits';
+    RAISE NOTICE 'Loading risky deposits...';
     RETURN QUERY
        WITH unsettled AS(
        SELECT orders.orderid,
