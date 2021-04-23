@@ -52,6 +52,8 @@ WITH BankledgerCandidateDetails AS(
       OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
       OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND bankledger.statementtext::text ILIKE '%' || (SELECT GlueID from BankledgerCandidateDetails) || '%')
       OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND (SELECT statementtext from BankledgerCandidateDetails) ILIKE '%' || Bankledger.glueID || '%')
+      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NOT NULL) /*Added temp to ensure all results for duplications comparision are calculated*/
+      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GLUEID IS NULL) /*Added temp to ensure all results for duplications comparision are calculated*/
          )
    GROUP BY 1,2,3,4,5,6,8,10
 ;
