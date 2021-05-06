@@ -4,7 +4,7 @@
 ## $ git config --global alias.up '!git remote update -p; git merge --ff-only @{u}'
 ## $ git up
 ## fatal: no upstream configured for branch 'master'
-gitRemote="https://github.com/trustlyinternalsupport/support-sql-procedures.git"
+gitRemote="git@bitbucket.org:TrustlySupport/support-sql-procedures.git"
 
 git status && git pull ${gitRemote}
 
