@@ -74,10 +74,3 @@ WITH EntrystepsHealth AS(
    GROUP BY 1,2,3,4,5,6,7,8,9,10,12,13,14, Done_percent, not_percent
    ORDER BY country, name, EntrystepID, identifier, COUNT DESC
 ;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'monitor_all_deposits');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

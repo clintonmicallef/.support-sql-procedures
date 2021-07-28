@@ -97,10 +97,3 @@ WITH EnduserOrders AS(
 \echo 7. orderattributes -> name merchant is sending us in their api call (unverified)
 \echo 8. accountnotification -> name we send in account notification to merchant (before we had verifiedkyc model)
 \echo **********************************************************************************************************
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'all_enduser_activity');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

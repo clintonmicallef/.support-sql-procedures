@@ -22,10 +22,3 @@ SELECT Orders.OrderID, TransferStates.Name AS TransferState,
   LEFT JOIN risk.DecisionLog ON (DecisionLog.OrderID = Orders.OrderID)
  WHERE Orders.OrderID = :'orderid'
 ;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'check_delayed_credit');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

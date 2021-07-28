@@ -16,12 +16,3 @@ SELECT * FROM pg_temp.secondline_view_risky_deposits(); --Performs a 2nd check a
 
 
 SELECT * from pg_temp.secondline_fail_risky_deposits(trim(:'answer'));  --Performs a 3rd check and does not allow any actions to run if not 2nd line agent
-
-
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'risky_deposits');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

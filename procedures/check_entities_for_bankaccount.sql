@@ -26,10 +26,3 @@ SELECT kyc.entities.kycentityid,
  ;
 
 \echo NOTE: If different names appear, very possible its a shared account.
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'check_entities_for_bankaccount');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

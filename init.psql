@@ -22,8 +22,8 @@
 \ir 'tables/procedures.sql'
 \ir 'tables/functions.sql'
 \ir 'tables/views.sql'
-\ir 'tables/userlogexport.sql'
-\ir 'tables/userlog.sql'
+--\ir 'tables/userlogexport.sql' /*Deprecated*/
+--\ir 'tables/userlog.sql' /*Deprecated*/
 
 -- Import definitions
 \ir import_functions.psql

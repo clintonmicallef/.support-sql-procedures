@@ -30,10 +30,3 @@ SELECT Entrysteps.EntrystepID,
  GROUP BY 1,2,3,4,7
  ORDER BY COUNT(*) DESC
 ;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'monitor_deposit_entrysteps');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

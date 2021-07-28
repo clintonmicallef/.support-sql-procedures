@@ -32,10 +32,3 @@ WITH RETRY AS(
    ORDER BY View_All_Bank_Withdrawals.bankwithdrawaltype, View_All_Bank_Withdrawals.Datestamp DESC
 )
 SELECT retry_queued_bank_withdrawal(Retry.BankWithdrawalID) FROM Retry;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'set_withdrawal_priority');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

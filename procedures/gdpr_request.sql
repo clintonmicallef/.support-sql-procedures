@@ -69,10 +69,3 @@ WITH CollectedData AS(
          array_to_string(array_agg(DISTINCT BlockedReasons),',') AS BlockedReasons
     FROM CollectedData
 ;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'gdpr_request');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

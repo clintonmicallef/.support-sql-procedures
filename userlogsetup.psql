@@ -1,4 +1,5 @@
 --Program called by all procedures after function user_log_function has been run to copy log to googledrive file and then copy back the whole user log file from Gdrive back to a table in the dB
+--This code is now deprecated 
 \COPY (SELECT * FROM SupportSQL_UserLogExport) TO PROGRAM 'cat >> /Volumes/GoogleDrive/Shared\ drives/Support/useraccesslog.csv' CSV
 DELETE FROM supportsql_userlog;
 \COPY pg_temp.SupportSQL_UserLog FROM '/Volumes/GoogleDrive/Shared drives/Support/useraccesslog.csv' CSV

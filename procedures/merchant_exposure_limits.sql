@@ -82,10 +82,3 @@ WITH test AS(
         FROM test;
 
 \echo 'Please note there might be EndUser Specific Limits!'
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'merchant_exposure_limits');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

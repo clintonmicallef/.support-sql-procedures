@@ -26,10 +26,3 @@
   ORDER BY 1, 2;
 
 \echo 'Values take last 7 days into account'
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'entrystep_deposit_settlement_stats');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'

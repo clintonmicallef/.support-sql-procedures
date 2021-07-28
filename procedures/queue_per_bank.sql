@@ -19,10 +19,3 @@ SELECT ROW_NUMBER() OVER(ORDER BY b.Attempts, t.Priority DESC, b.Datestamp),
    AND BankWithdrawalState = 'QUEUED'
    AND v.Datestamp >=now()-'7 days'::interval
  ORDER BY v.BankWithdrawalType, v.Datestamp DESC, b.Attempts, t.Priority DESC;
-
-
--- Inserts data of this execution in temp table. Copy this data into GoogleDrive. Copy from GoogleDrive ALL data back into another temp table for viewing.
-\t
-SELECT pg_temp.user_log_function(user::text, now()::timestamp , 'queue_per_bank');
-\t
-\i '~/.support-sql-procedures/userlogsetup.psql'
