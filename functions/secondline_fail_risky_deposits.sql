@@ -47,5 +47,3 @@ END IF;
 RETURN FALSE;
 END;
 $function$;
-
---test 
