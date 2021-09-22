@@ -14,7 +14,7 @@ BEGIN
 
 SELECT user INTO _loggedinuser;
 
-IF _loggedinuser IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas')
+IF _loggedinuser IN ('clintonmicallef', 'tomasvebr', 'benjaminschembri', 'dimitriossliakas')
   THEN
     RAISE NOTICE 'Loading risky deposits...';
     RETURN QUERY

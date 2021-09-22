@@ -5,7 +5,7 @@
 \pset expanded off
 
 --Performs a 1st check on agent running this
-SELECT (CASE WHEN user NOT IN ('tomasvebr', 'benjaminschembri', 'dimitriossliakas') THEN 'Unauthorised Access - please exit' ELSE 'Please wait...' END) AS Notice;
+SELECT (CASE WHEN user NOT IN ('clintonmicallef', 'tomasvebr', 'benjaminschembri', 'dimitriossliakas') THEN 'Unauthorised Access - please exit' ELSE 'Please wait...' END) AS Notice;
 
 
 SELECT * FROM pg_temp.secondline_view_risky_deposits(); --Performs a 2nd check and doesnt allow if non 2nd line
