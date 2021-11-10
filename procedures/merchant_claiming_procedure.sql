@@ -1,14 +1,11 @@
 /* Info for merchant to claim bankledger row - via QuickText in SalesForce */
-\echo test
-\echo '\n'
+
 \prompt 'Please enter the BankLedgerID', bankledgerid
 ​
 \set QUIET ON
 ​
 \pset expanded off
-​
-\x ON
-​
+​​
 WITH transactionDetails AS (
    SELECT
       bankledger.bankledgerid,
