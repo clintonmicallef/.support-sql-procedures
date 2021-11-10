@@ -1,70 +1,125 @@
 /* Info for merchant to claim bankledger row - via QuickText in SalesForce */
-
-\prompt 'Please enter the BankLedgerID', bankledgerid
-
-\set QUIET ON
-
-\pset expanded off
-
-WITH BankledgerCandidateDetails AS(
-  SELECT BankLedger.BankledgerID,
-         BankLedger.bankaccountid,
-         BankLedger.amount,
-         COALESCE(BankLedger.Recorddate, BankLedger.Transactiondate) AS date,
-         BankLedger.GlueID,
-         Bankledger.Statementtext
-  FROM BankLedger
- WHERE BankLedger.bankledgerid = :'bankledgerid'
-  )
-  SELECT BankledgerId,
-         AMount,
-         transactiondate,
-         GlueID,
-         Processed::boolean,
-         Processedas,
-         SUM(COUNT(*)) over() AS bankledgercandidates,
-         COALESCE(NULLIF(MTStatements.COUNT,0), NULLIF(CSVSTATEMENTS.COUNT,0)) AS StatementTransactions,
-         (CASE WHEN ((SUM(COUNT(*)) over()) > COALESCE(NULLIF(MTStatements.COUNT,0), NULLIF(CSVSTATEMENTS.COUNT,0)))  THEN 'ATTENTION DUPLICATES!' ELSE 'NONE DETECTED' END) AS Duplicates_CHeck,
-         CASE WHEN ((bankledger.processed = 0 AND is_safe_deposit(bankledger.bankledgerid) IS TRUE) OR (bankledger.unclaimedat IS NOT NULL AND bankledger.bookedasrevenueat IS NULL)) AND (BankAccounts.allowclaim = 1) THEN 'YES' ELSE 'NO' END AS Claimable
-    FROM bankledger
-    JOIN BankAccounts ON Bankaccounts.BankaccountID = Bankledger.bankaccountid
-    LEFT JOIN LATERAL(
-      SELECT SUM(COUNT(*)) over() as COUNT
-        FROM MT94xparser.statementlines
-       WHERE accountidentificationID IN (SELECT accountidentificationid FROM MT94xparser.accountIdentifications WHERE AccountIdentification IN (SELECT Accountidentification FROM bankaccounts where bankaccountid = bankledger.bankaccountid))
-         AND amount = bankledger.amount
-         AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
-         AND (glueid = bankledger.glueID OR glueid IS NULL)
-    ) AS MTStatements ON TRUE
-    LEFT JOIN LATERAL(
-      SELECT SUM(COUNT(*)) over() as COUNT
-        FROM Ledger.rows
-       WHERE ledgeraccountID IN (SELECT ledgeraccountid from ledger.accounts where accountidentification IN (SELECT ecosysaccount from bankaccounts where bankaccountid = bankledger.bankaccountid))
-         AND amount = bankledger.amount
-         AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
-         AND (reference = bankledger.glueID OR reference IS NULL)
-    ) AS CSVStatements ON TRUE
-   WHERE bankledger.bankaccountid IN (SELECT bankaccountid FROM BankledgerCandidateDetails)
-     AND amount IN (SELECT amount FROM BankledgerCandidateDetails)
-     AND COALESCE(recorddate, transactiondate) IN (SELECT date FROM BankledgerCandidateDetails)
-     AND (
-         ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails))
-      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
-      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND bankledger.statementtext::text ILIKE '%' || (SELECT GlueID from BankledgerCandidateDetails) || '%')
-      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND (SELECT statementtext from BankledgerCandidateDetails) ILIKE '%' || Bankledger.glueID || '%')
-      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NOT NULL) /*Added temp to ensure all results for duplications comparision are calculated*/
-      OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GLUEID IS NULL) /*Added temp to ensure all results for duplications comparision are calculated*/
-         )
-   GROUP BY 1,2,3,4,5,6,8,10
-;
-
-\echo 'Please double check your findings. Compare bankledger candidates to what we have in our statements (MT or CSV)'
+​
 \echo '\n'
-\echo 'Claiming Tool Details:'
-
-
+\prompt 'Please enter the BankLedgerID', bankledgerid
+​
+\set QUIET ON
+​
+\pset expanded off
+​
+\x ON
+​
+WITH transactionDetails AS (
+   SELECT
+      bankledger.bankledgerid,
+      bankledger.bankaccountid,
+      bankledger.amount,
+      COALESCE( bankledger.recorddate, bankledger.transactiondate ) AS date,
+      bankledger.glueid,
+      Bankledger.statementtext
+   FROM
+      bankledger
+   WHERE
+      bankledgerid = :'bankledgerid'
+)
 SELECT
-  ba.currency as "Currency",
+   bankledgerid,
+   CASE
+      WHEN ((CURRENT_DATE - transactiondate) < 90) THEN 'OK'
+      WHEN ((CURRENT_DATE - transactiondate) BETWEEN 90 AND 180) THEN CONCAT((CURRENT_DATE - transactiondate),' DAYS OLD! CLAIMABLE BY TRUSTLY SUPPORT!')
+      ELSE CONCAT((CURRENT_DATE - transactiondate),' DAYS OLD! CONTACT AM!')
+   END AS "date_check",
+   COUNT(*) over() AS bankledger_transactions,
+   COALESCE( NULLIF(mt.total, 0), NULLIF(csv.total, 0) ) AS statement_transactions,
+   CASE
+      WHEN (
+         (COUNT(*) over()) > COALESCE( NULLIF(mt.total, 0), NULLIF(csv.total, 0) )
+      ) THEN 'ATTENTION DUPLICATES!'
+      ELSE 'NONE DETECTED'
+   END AS duplicates_check,
+   CASE
+      WHEN (
+         (
+            (
+               bl.processed = 0
+               AND is_safe_deposit(bl.bankledgerid) IS TRUE
+            )
+            OR (
+               bl.unclaimedat IS NOT NULL
+               AND bl.bookedasrevenueat IS NULL
+            )
+         )
+         AND (ba.allowclaim = 1)
+      ) THEN 'YES'
+      ELSE 'NO'
+   END AS claimable,
+   processedas,
+   describe_ledger_row(bl.bankledgerid) AS "ledger_info"
+FROM
+   bankledger bl
+   JOIN bankaccounts ba ON ba.BankaccountID = bl.bankaccountid
+   LEFT JOIN LATERAL(
+      SELECT
+         COUNT(*) AS "total"
+      FROM
+         MT94xparser.statementlines
+      WHERE
+         accountidentificationid IN (
+            SELECT
+               accountidentificationid
+            FROM
+               MT94xparser.accountIdentifications
+            WHERE
+               accountidentification IN (
+                  SELECT
+                     accountidentification
+                  FROM
+                     bankaccounts
+                  WHERE
+                     bankaccountid = bl.bankaccountid
+               )
+         )
+         AND amount = bl.amount
+         AND balancedate = COALESCE(bl.recorddate, bl.transactiondate)
+   ) AS mt ON TRUE
+   LEFT JOIN LATERAL(
+      SELECT
+         COUNT(*) AS "total"
+      FROM
+         ledger.rows
+      WHERE
+         ledgeraccountID IN (
+            SELECT
+               ledgeraccountid
+            FROM
+               ledger.accounts
+            WHERE
+               accountidentification IN (
+                  SELECT
+                     ecosysaccount
+                  FROM
+                     bankaccounts
+                  WHERE
+                     bankaccountid = bl.bankaccountid
+               )
+         )
+         AND amount = bl.amount
+         AND balancedate = COALESCE(bl.recorddate, bl.transactiondate)
+   ) AS csv ON TRUE
+WHERE
+   bl.bankaccountid = ( SELECT bankaccountid FROM transactionDetails )
+   AND bl.amount = ( SELECT amount FROM transactionDetails )
+   AND COALESCE(bl.recorddate, bl.transactiondate) = ( SELECT date FROM transactionDetails )
+GROUP BY
+   1,2,4,6,7
+ORDER BY
+   bl.bankledgerid = :'bankledgerid' DESC
+LIMIT 1;
+​
+\echo 'Claiming Tool Details:'
+​
+SELECT
+  ba.currency AS "Currency",
   CONCAT(
     ch.name,
     ': ',
@@ -75,69 +130,16 @@ SELECT
     ba.accountnumber,
     ' ',
     ba.currency
-  ) as "Bank Account",
-  COALESCE(l.transactiondate, l.recorddate) as "Date",
-  l.amount as "Amount"
-FROM BankLedger l
-LEFT JOIN bankaccounts ba ON (l.bankaccountid = ba.bankaccountid)
-LEFT JOIN banknumbers bn ON (ba.banknumberid = bn.banknumberid)
-LEFT JOIN banks b ON (bn.bankid = b.bankid)
-JOIN clearinghouses ch ON (ch.clearinghouseid = bn.clearinghouseid)
+  ) AS "Bank Account",
+  l.transactiondate AS "Date",
+  l.amount AS "Amount"
+FROM
+  bankledger l
+  LEFT JOIN bankaccounts ba ON (l.bankaccountid = ba.bankaccountid)
+  LEFT JOIN banknumbers bn ON (ba.banknumberid = bn.banknumberid)
+  LEFT JOIN banks b ON (bn.bankid = b.bankid)
+  JOIN clearinghouses ch ON (ch.clearinghouseid = bn.clearinghouseid)
 WHERE
-  l.bankledgerid = :'bankledgerid'
-  AND EXISTS (
-    SELECT 1
-      FROM (
-        WITH BankledgerCandidateDetails AS(
-          SELECT BankLedger.BankledgerID,
-                 BankLedger.bankaccountid,
-                 BankLedger.amount,
-                 COALESCE(BankLedger.Recorddate, BankLedger.Transactiondate) AS date,
-                 BankLedger.GlueID,
-                 Bankledger.Statementtext
-          FROM BankLedger
-         WHERE BankLedger.bankledgerid = :'bankledgerid'
-          )
-          SELECT BankledgerId,
-                 AMount,
-                 transactiondate,
-                 GlueID,
-                 Processed::boolean,
-                 Processedas,
-                 SUM(COUNT(*)) over() AS bankledgercandidates,
-                 COALESCE(NULLIF(MTStatements.COUNT,0), NULLIF(CSVSTATEMENTS.COUNT,0)) AS StatementTransactions,
-                 (CASE WHEN ((SUM(COUNT(*)) over()) > COALESCE(NULLIF(MTStatements.COUNT,0), NULLIF(CSVSTATEMENTS.COUNT,0)))  THEN 'ATTENTION DUPLICATES!' ELSE 'NONE DETECTED' END) AS Duplicates_CHeck,
-                 CASE WHEN ((bankledger.processed = 0 AND is_safe_deposit(bankledger.bankledgerid) IS TRUE) OR (bankledger.unclaimedat IS NOT NULL AND bankledger.bookedasrevenueat IS NULL)) AND (BankAccounts.allowclaim = 1) THEN 'YES' ELSE 'NO' END AS Claimable
-            FROM bankledger
-            JOIN BankAccounts ON Bankaccounts.BankaccountID = Bankledger.bankaccountid
-            LEFT JOIN LATERAL(
-              SELECT SUM(COUNT(*)) over() as COUNT
-                FROM MT94xparser.statementlines
-               WHERE accountidentificationID IN (SELECT accountidentificationid FROM MT94xparser.accountIdentifications WHERE AccountIdentification IN (SELECT Accountidentification FROM bankaccounts where bankaccountid = bankledger.bankaccountid))
-                 AND amount = bankledger.amount
-                 AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
-                 AND (glueid = bankledger.glueID OR glueid IS NULL)
-            ) AS MTStatements ON TRUE
-            LEFT JOIN LATERAL(
-              SELECT SUM(COUNT(*)) over() as COUNT
-                FROM Ledger.rows
-               WHERE ledgeraccountID IN (SELECT ledgeraccountid from ledger.accounts where accountidentification IN (SELECT ecosysaccount from bankaccounts where bankaccountid = bankledger.bankaccountid))
-                 AND amount = bankledger.amount
-                 AND balancedate = COALESCE(bankledger.recorddate, bankledger.transactiondate)
-                 AND (reference = bankledger.glueID OR reference IS NULL)
-            ) AS CSVStatements ON TRUE
-           WHERE bankledger.bankaccountid IN (SELECT bankaccountid FROM BankledgerCandidateDetails)
-             AND amount IN (SELECT amount FROM BankledgerCandidateDetails)
-             AND COALESCE(recorddate, transactiondate) IN (SELECT date FROM BankledgerCandidateDetails)
-             AND (
-                 ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND Bankledger.GlueID IN (SELECT GLUEID FROM BankledgerCandidateDetails))
-              OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND Bankledger.GLUEID IS NULL)
-              OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NOT NULL AND bankledger.statementtext::text ILIKE '%' || (SELECT GlueID from BankledgerCandidateDetails) || '%')
-              OR ((SELECT GLUEID FROM BankledgerCandidateDetails) IS NULL AND (SELECT statementtext from BankledgerCandidateDetails) ILIKE '%' || Bankledger.glueID || '%')
-                 )
-           GROUP BY 1,2,3,4,5,6,8,10
-      ) BankledgerCandidatestoclaim
-    WHERE BankledgerCandidatestoclaim.duplicates_check = 'NONE DETECTED'
-      AND BankledgerCandidatestoclaim.claimable = 'YES'
-    )
-;
+  l.bankledgerid = :'bankledgerid';
+​
+\echo 'Please double check your findings. Compare bankledger candidates to what we have in our statements (MT or CSV)'
