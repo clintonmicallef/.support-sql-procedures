@@ -1,5 +1,5 @@
 /* Info for merchant to claim bankledger row - via QuickText in SalesForce */
-
+\echo test
 \echo '\n'
 \prompt 'Please enter the BankLedgerID', bankledgerid
 ​
