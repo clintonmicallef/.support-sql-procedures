@@ -7,15 +7,19 @@ CREATE OR REPLACE FUNCTION pg_temp.secondline_view_risky_deposits()
    STABLE
 AS $function$
 
-DECLARE
-_loggedinuser text;
-
 BEGIN
 
-SELECT user INTO _loggedinuser;
+  IF NOT EXISTS(
+    SELECT 1
+      FROM pg_auth_members
+      JOIN pg_roles member ON member.oid = pg_auth_members.member
+      JOIN pg_roles role ON role.oid=pg_auth_members.roleid
+     WHERE role.rolname = 'support_second_line'
+       AND member.rolname = session_user
+     ) THEN
+         RAISE EXCEPTION 'No Function access. 2ndline access only';
+  END IF;
 
-IF _loggedinuser IN ('clintonmicallef', 'tomasvebr', 'benjaminschembri', 'dimitriossliakas')
-  THEN
     RAISE NOTICE 'Loading risky deposits...';
     RETURN QUERY
        WITH unsettled AS(
@@ -135,8 +139,6 @@ IF _loggedinuser IN ('clintonmicallef', 'tomasvebr', 'benjaminschembri', 'dimitr
                 SELECT fail.*
                   FROM fail;
 
-ELSE RAISE EXCEPTION 'Unauthorised Access - 2nd line access only';
-END IF;
 
 RETURN;
 END;
