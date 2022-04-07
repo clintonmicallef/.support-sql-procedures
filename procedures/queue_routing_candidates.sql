@@ -27,6 +27,7 @@ WITH Queued_Withdrawals AS (
       JOIN Users ON (Users.UserID = BankWithdrawals.UserID)
       JOIN UserCategories ON (UserCategories.UserCategoryID = Users.UserCategoryID)
      WHERE View_Bank_Withdrawals_In_Queue.EcoSysAccount = :'ecosysaccount'
+       AND View_Bank_Withdrawals_In_Queue.Datestamp >= now() - interval '4 days'
      ORDER BY View_Bank_Withdrawals_In_Queue.EcoSysAccount, View_Bank_Withdrawals_In_Queue.Prio
    ), Queued_Withdrawals_SBA_Candidates AS (
      SELECT ROW_NUMBER() OVER (PARTITION BY Candidates.BankWithdrawalID ORDER BY /*This should be identical wit Get_Sending_Bank_Account_Candidates()*/ Candidates.SameCurrency DESC,Candidates.BankNumberPreferredRoute DESC,Candidates.BankPreferredRoute DESC,Candidates.SendingBankAccount DESC NULLS LAST,Candidates.ClearingHouseBankAccount DESC NULLS LAST,Candidates.BankGroup DESC NULLS LAST,Candidates.IntraBank DESC NULLS LAST,Candidates.Priority ASC NULLS LAST,Candidates.Balance DESC NULLS LAST),
