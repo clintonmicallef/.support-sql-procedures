@@ -8,7 +8,6 @@ LANGUAGE plpgsql
 AS $function$
 
 DECLARE
-_loggedinuser text;
 _transferID bigint;
 _count bigint;
 
