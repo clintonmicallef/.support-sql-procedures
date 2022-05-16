@@ -47,7 +47,42 @@ SELECT
             )
          )
          AND (ba.allowclaim = 1)
-      ) THEN 'YES'
+      ) AND NOT EXISTS(
+         SELECT
+            1
+         FROM
+            Transfers
+         WHERE
+            Transfers.TransferID = bl.glueid
+            AND Transfers.Amount = bl.amount
+            AND NOT EXISTS (
+               SELECT
+                  1
+               FROM
+                  Transfers OtherTransfer
+               WHERE
+                  OtherTransfer.OrderID = Transfers.OrderID
+                  AND OtherTransfer.TransferStateID = Get_TransferStateID('SETTLED')
+            )
+      )  THEN 'YES'
+      WHEN EXISTS(
+         SELECT
+            1
+         FROM
+            Transfers
+         WHERE
+            Transfers.TransferID = bl.glueid
+            AND Transfers.Amount = bl.amount
+            AND NOT EXISTS (
+               SELECT
+                  1
+               FROM
+                  Transfers OtherTransfer
+               WHERE
+                  OtherTransfer.OrderID = Transfers.OrderID
+                  AND OtherTransfer.TransferStateID = Get_TransferStateID('SETTLED')
+            )
+      ) THEN 'Unprocessed DirectRouting settlement transfer - Escalate to 2nd Line'
       ELSE 'NO'
    END AS is_claimable,
    processedas AS processed_as,
