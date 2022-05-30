@@ -15,7 +15,9 @@ CREATE TEMP TABLE backofficepasswordresult(curlresult json);
 \COPY pg_temp.backofficepasswordresult FROM '~/output.txt';
 
 --Take sessionuuid as follows:
-SELECT curlresult::json->'result'->>'sessionuuid' AS Backoffice_sessionuuid FROM backofficepasswordresult;
+SELECT curlresult::json->'result'->>'supportusername' AS username,
+       curlresult::json->'result'->>'sessionuuid' AS Backoffice_sessionuuid
+  FROM backofficepasswordresult;
 
 --Delete curl result output from file
 \! rm ~/output.txt
