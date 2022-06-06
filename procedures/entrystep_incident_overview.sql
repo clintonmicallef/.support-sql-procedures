@@ -51,3 +51,5 @@ WITH Deposit_Monitor AS(
         --,lastorderstep
    FROM Deposit_Monitor m
   ORDER BY 1;
+
+\! id -un | sed "s|$|,'$(date +%F_%T)',:entrystep_incident_overview|" >> /Volumes/GoogleDrive/Shared\ drives/Support/GitHub\ Action\ Log/action_log.csv
